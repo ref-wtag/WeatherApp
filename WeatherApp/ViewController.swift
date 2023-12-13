@@ -6,12 +6,17 @@
 //
 
 import UIKit
+import CoreLocation
 
 class ViewController: UIViewController {
 
+    var lat : Double = 0.0
+    var long : Double = 0.0
+    let locationManager = CLLocationManager()
+    var cityNameString : String = ""
     
     let networkManager = NetworkManager()
-    var hourlyWeatherInfo : HourlyWeatherInfoResponse? = nil
+    var weatherForecastInfo : WeatherForecastResponse? = nil
     var currentWeatherInfo : CurrentWeatherInfoResponse? = nil
     
     @IBOutlet var collectionView : UICollectionView!
@@ -23,13 +28,16 @@ class ViewController: UIViewController {
     @IBOutlet var weatherLabel : UILabel!
     
     
-    @IBAction func SearchCity(){
-        
+    @IBAction func SearchCityButton(){
+        let vc = self.storyboard?.instantiateViewController(withIdentifier: "LocationSearchViewController") as! LocationSearchViewController
+        self.navigationController?.pushViewController(vc, animated: true)
         
     }
     
-    @IBAction func WeatherForecast(){
-        
+    @IBAction func WeatherForecastButton(){
+        let vc = self.storyboard?.instantiateViewController(withIdentifier: "WeatherForecastViewController") as! WeatherForecastViewController
+        vc.cityNameString = self.cityNameString
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     override func viewDidLoad() {
@@ -41,18 +49,18 @@ class ViewController: UIViewController {
         collectionView.delegate = self
         collectionView.dataSource = self
         
-        fetchHourlyWeatherInfo()
         fetchCurrentWeatherInfo()
-        
+        fetchWeatherForecastInfo()
+        getCurrentLocation()
     }
     
-    func fetchHourlyWeatherInfo(){
-        networkManager.fetchHourlyWeatherInfo{ result in
+    func fetchWeatherForecastInfo(){
+        networkManager.fetchWeatherForecastInfo{ result in
             switch result{
             case .success(let hourlyWeatherInfo):
                 DispatchQueue.main.async {
-                    self.hourlyWeatherInfo = hourlyWeatherInfo
-                    self.reloadDataOnView()
+                    self.weatherForecastInfo = hourlyWeatherInfo
+                    self.collectionView.reloadData()
                 }
             case .failure(let error):
                 print(error.localizedDescription)
@@ -67,20 +75,24 @@ class ViewController: UIViewController {
             case .success(let currentWeatherInfo):
                 DispatchQueue.main.async {
                     self.currentWeatherInfo = currentWeatherInfo
-                    self.collectionView.reloadData()
+                    self.loadCurrentLocationData()
                 }
             case .failure(let error):
                 print(error.localizedDescription)
             }
         }
+       
     }
     
-    func reloadDataOnView(){
-        cityName.text = "No City To Show Right Now"
-        temperature.text = "\(currentWeatherInfo?.main.temp)"
+    func loadCurrentLocationData(){
+    
+        let tempInCelcious = (currentWeatherInfo?.main.temp ?? 0.0) - 273.15
+        let temp = String(format: "%.2f", tempInCelcious)
+        temperature.text = String(temp) + "°C"
+        
         weatherType.text = currentWeatherInfo?.weather[0].main
         
-        var imageUrlString = "https://openweathermap.org/img/w/" + (currentWeatherInfo?.weather[0].icon ?? "") + ".png"
+        let imageUrlString = "https://openweathermap.org/img/w/" + (currentWeatherInfo?.weather[0].icon ?? "") + ".png"
         let imageUrl = URL(string:  imageUrlString)
         
         URLSession.shared.dataTask(with: imageUrl!) { data, _, error in
@@ -91,23 +103,45 @@ class ViewController: UIViewController {
             }
         }.resume()
     }
+    
+    func getCurrentLocation(){
+        self.locationManager.requestAlwaysAuthorization()
+        self.locationManager.requestWhenInUseAuthorization()
+        
+        DispatchQueue.global().async { [self] in
+        if CLLocationManager.locationServicesEnabled() {
+            locationManager.delegate = self
+            locationManager.startUpdatingLocation()
+        }
+        }
+    }
+    
+    func getCityName(){
+        let location = CLLocation(latitude: lat, longitude: long)
+        location.fetchCityAndCountry { city, country, error in
+            
+        guard let city = city, let country = country, error == nil else { return }
+            self.cityName.text = city
+            self.cityNameString = city
+            
+        }
+    }
 
 }
-
 
 extension ViewController : UICollectionViewDelegate, UICollectionViewDataSource{
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return hourlyWeatherInfo?.list.count ?? 0
+        return weatherForecastInfo?.list.count ?? 0
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! WeatherForecastCollectionViewCell
         
-        guard indexPath.row < (hourlyWeatherInfo?.list.count)! else{
+        guard indexPath.row < (weatherForecastInfo?.list.count)! else{
             return cell
         }
         
-        let dateString = hourlyWeatherInfo?.list[indexPath.row].dt_txt ?? ""
+        let dateString = weatherForecastInfo?.list[indexPath.row].dt_txt ?? ""
 
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
@@ -118,17 +152,17 @@ extension ViewController : UICollectionViewDelegate, UICollectionViewDataSource{
             cell.time.text =  formattedDateString
         }
        
-        let tempInCelcious = (hourlyWeatherInfo?.list[indexPath.row].main.temp ?? 0.0) - 273.15
+        let tempInCelcious = (weatherForecastInfo?.list[indexPath.row].main.temp ?? 0.0) - 273.15
         let temp = String(format: "%.2f", tempInCelcious)
         cell.temperature.text = String(temp) + "°C"
     
-        if let windSpeed = hourlyWeatherInfo?.list[indexPath.row].wind.speed{
-            cell.windSpeed.text = "\(windSpeed)"
+        if let windSpeed = weatherForecastInfo?.list[indexPath.row].wind.speed{
+            cell.windSpeed.text = "\(windSpeed) Km/H"
         }else{
             cell.windSpeed.text = ""
         }
         
-        var imageUrlString = "https://openweathermap.org/img/w/" + (hourlyWeatherInfo?.list[indexPath.row].weather[0].icon)! + ".png"
+        var imageUrlString = "https://openweathermap.org/img/w/" + (weatherForecastInfo?.list[indexPath.row].weather[0].icon)! + ".png"
         let imageUrl = URL(string:  imageUrlString)
         
         URLSession.shared.dataTask(with: imageUrl!) { data, _, error in
@@ -143,4 +177,20 @@ extension ViewController : UICollectionViewDelegate, UICollectionViewDataSource{
         return cell
     }
     
+}
+
+extension ViewController : CLLocationManagerDelegate{
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let locationValue : CLLocationCoordinate2D = manager.location?.coordinate else{return}
+        self.lat = locationValue.latitude
+        self.long = locationValue.longitude
+        self.getCityName()
+    }
+}
+
+extension CLLocation{
+    func fetchCityAndCountry(completion: @escaping (_ city: String?, _ country:  String?, _ error: Error?) -> ()) {
+        CLGeocoder().reverseGeocodeLocation(self) { completion($0?.first?.administrativeArea, $0?.first?.country, $1) }
+    }
 }
