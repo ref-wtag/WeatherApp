@@ -7,6 +7,7 @@
 
 import UIKit
 import CoreLocation
+import RealmSwift
 
 class ViewController: UIViewController {
 

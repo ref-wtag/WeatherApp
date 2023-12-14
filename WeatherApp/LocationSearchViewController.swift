@@ -16,7 +16,10 @@ addChild(panelController)
  
 extension LocationSearchViewController : SearchControllerDelegate{
     func searchResultSelected(_ searchResult: MapboxSearch.SearchResult) {
-        
+        print("--------------------------------------")
+        print(searchResult.address)
+        print(searchResult.address?.region)
+        print("--------------------------------------")
     }
     
     func categorySearchResultsReceived(category: MapboxSearchUI.SearchCategory, results: [MapboxSearch.SearchResult]) {
@@ -26,13 +29,5 @@ extension LocationSearchViewController : SearchControllerDelegate{
     func userFavoriteSelected(_ userFavorite: MapboxSearch.FavoriteRecord) {
         
     }
-    
-    
 }
 
-
-//extension LocationSearchViewController: SearchControllerDelegate {
-//func searchResultSelected(_ searchResult: SearchResult) { }
-//func categorySearchResultsReceived(results: [SearchResult]) { }
-//func userFavoriteSelected(_ userFavorite: FavoriteRecord) { }
-//}

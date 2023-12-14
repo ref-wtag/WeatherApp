@@ -176,11 +176,15 @@ code_sign_if_enabled() {
 }
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
+  install_framework "${BUILT_PRODUCTS_DIR}/Realm/Realm.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework"
   install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/MapboxCommon/MapboxCommon.framework"
   install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/MapboxSearch/MapboxSearch.framework"
   install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/MapboxSearchUI/MapboxSearchUI.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
+  install_framework "${BUILT_PRODUCTS_DIR}/Realm/Realm.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework"
   install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/MapboxCommon/MapboxCommon.framework"
   install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/MapboxSearch/MapboxSearch.framework"
   install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/MapboxSearchUI/MapboxSearchUI.framework"
