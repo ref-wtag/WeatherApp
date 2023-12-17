@@ -4,15 +4,15 @@ PODS:
     - MapboxCommon (~> 23.6)
   - MapboxSearchUI (1.0.0-rc.8):
     - MapboxSearch (< 2.0, >= 1.0.0-rc.8)
-  - Realm (10.44.0):
-    - Realm/Headers (= 10.44.0)
-  - Realm/Headers (10.44.0)
-  - RealmSwift (10.44.0):
-    - Realm (= 10.44.0)
+  - Realm (10.45.0):
+    - Realm/Headers (= 10.45.0)
+  - Realm/Headers (10.45.0)
+  - RealmSwift (10.45.0):
+    - Realm (= 10.45.0)
 
 DEPENDENCIES:
   - MapboxSearchUI (< 2.0, >= 1.0.0-rc.8)
-  - RealmSwift
+  - RealmSwift (= 10.45.0)
 
 SPEC REPOS:
   trunk:
@@ -26,9 +26,9 @@ SPEC CHECKSUMS:
   MapboxCommon: 677dd4449e9f7d863a4712cf271c198ed1753494
   MapboxSearch: ac6ce2083172dc1095c3519ee69fe91f31558504
   MapboxSearchUI: ce955875d52399804e3afba2016b9387a54974fa
-  Realm: 0419a32457873acb720df25bf1d658df36967cf2
-  RealmSwift: 352f85c018b4d0efe961974bfa95bf7a30e079f6
+  Realm: 6604fa855b0aa6e8cab451373445413708dca398
+  RealmSwift: e5ae14b314f3569f053563f88366d6f07e9ade62
 
-PODFILE CHECKSUM: 591296b3160b629a1bf0e4fa18e38f5516ad328c
+PODFILE CHECKSUM: 3fca372cf993893e1caeff051b59f553bb96a16e
 
 COCOAPODS: 1.14.3

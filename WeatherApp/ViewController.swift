@@ -15,6 +15,8 @@ class ViewController: UIViewController {
     var long : Double = 0.0
     let locationManager = CLLocationManager()
     var cityNameString : String = ""
+    //var realmManager = RealmManager()
+    
     
     let networkManager = NetworkManager()
     var weatherForecastInfo : WeatherForecastResponse? = nil
@@ -43,7 +45,7 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+       // print(Realm.Configuration.defaultConfiguration.fileURL)
         let nib = UINib(nibName: "WeatherForecastCollectionViewCell", bundle: nil)
         collectionView.register(nib, forCellWithReuseIdentifier: "cell")
 
@@ -62,9 +64,12 @@ class ViewController: UIViewController {
                 DispatchQueue.main.async {
                     self.weatherForecastInfo = hourlyWeatherInfo
                     self.collectionView.reloadData()
+                    // self.realmManager.deleteWeatherForecastData()
+                   //self.realmManager.saveWeatherForecastData()
                 }
             case .failure(let error):
                 print(error.localizedDescription)
+                //self.realmManager.getWeatherForecastData()
             }
             
         }
@@ -77,9 +82,13 @@ class ViewController: UIViewController {
                 DispatchQueue.main.async {
                     self.currentWeatherInfo = currentWeatherInfo
                     self.loadCurrentLocationData()
+                    //self.realmManager.deleteWeatherInfoData()
+                   // self.realmManager.saveWeatherInfoData()
+                    
                 }
             case .failure(let error):
                 print(error.localizedDescription)
+                //self.realmManager.getWeatherInfoData()
             }
         }
        

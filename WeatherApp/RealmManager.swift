@@ -19,7 +19,7 @@ class RealmManager{
     var weatherForecastInfo : WeatherForecastResponse? = nil
     var currentWeatherInfo : CurrentWeatherInfoResponse? = nil
     
-    func deleteWeatherInfoData(){
+    func deleteWeatherInfoData() async{
         try! realm.write{
             realm.delete(realm.objects(WeatherInfoRealmClass.self))
         }
@@ -47,6 +47,7 @@ class RealmManager{
       try! realm.write{
      realm.add(weatherInfo)
       }
+        
         var weatherForecastInfoSize : Int? = weatherForecastInfo?.list.count
         
         for i in 0...weatherForecastInfoSize!

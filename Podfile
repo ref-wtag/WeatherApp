@@ -6,6 +6,6 @@ target 'WeatherApp' do
   use_frameworks!
 
   pod 'MapboxSearchUI', ">= 1.0.0-rc.8", "< 2.0"
-  pod 'RealmSwift'
+  pod 'RealmSwift', "=10.45.0"
 
 end
