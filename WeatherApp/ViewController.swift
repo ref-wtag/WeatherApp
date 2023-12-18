@@ -15,8 +15,8 @@ class ViewController: UIViewController {
     var long : Double = 0.0
     let locationManager = CLLocationManager()
     var cityNameString : String = ""
-    //var realmManager = RealmManager()
-    
+    var realmManager = RealmManager()
+    let realm = try! Realm()
     
     let networkManager = NetworkManager()
     var weatherForecastInfo : WeatherForecastResponse? = nil
@@ -24,14 +24,18 @@ class ViewController: UIViewController {
     
     @IBOutlet var collectionView : UICollectionView!
     
+    
     @IBOutlet var  cityName : UILabel!
     @IBOutlet var temperature : UILabel!
     @IBOutlet var icon : UIImageView!
     @IBOutlet var weatherType : UILabel!
     @IBOutlet var weatherLabel : UILabel!
     
+    @IBOutlet var searchCityButton : UIButton!
+    @IBOutlet var weatherForecastButton : UIButton!
     
     @IBAction func SearchCityButton(){
+       // let vc = self.storyboard?.instantiateViewController(withIdentifier: "LocationSearchViewController") as! LocationSearchViewController
         let vc = self.storyboard?.instantiateViewController(withIdentifier: "LocationSearchViewController") as! LocationSearchViewController
         self.navigationController?.pushViewController(vc, animated: true)
         
@@ -45,16 +49,46 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-       // print(Realm.Configuration.defaultConfiguration.fileURL)
+        print(Realm.Configuration.defaultConfiguration.fileURL)
+        
         let nib = UINib(nibName: "WeatherForecastCollectionViewCell", bundle: nil)
         collectionView.register(nib, forCellWithReuseIdentifier: "cell")
-
         collectionView.delegate = self
         collectionView.dataSource = self
-        
+        collectionView.backgroundColor = UIColor.clear
+    
+        setColorForButton()
         fetchCurrentWeatherInfo()
         fetchWeatherForecastInfo()
         getCurrentLocation()
+    }
+    
+    func setColorForButton(){
+        searchCityButton.setTitle("Click Here to Search City", for: .normal)
+        searchCityButton.setTitleColor(UIColor.white, for: .normal)
+        
+        weatherForecastButton.setTitle("5-Day Weather Forecast", for: .normal)
+        weatherForecastButton.setTitleColor(UIColor.white, for: .normal)
+    }
+    
+    
+    func fetchCurrentWeatherInfo(){
+        networkManager.fetchCurrentWeatherInfo{ result in
+            switch result{
+            case .success(let currentWeatherInfo):
+                DispatchQueue.main.async {
+                    self.currentWeatherInfo = currentWeatherInfo
+                    self.loadCurrentLocationData()
+                    self.realmManager.deleteWeatherInfoData()
+                    self.saveWeatherInfoData()
+                    
+                }
+            case .failure(let error):
+                self.getWeatherInfoData()
+                print(error.localizedDescription)
+            }
+        }
+       
     }
     
     func fetchWeatherForecastInfo(){
@@ -64,35 +98,17 @@ class ViewController: UIViewController {
                 DispatchQueue.main.async {
                     self.weatherForecastInfo = hourlyWeatherInfo
                     self.collectionView.reloadData()
-                    // self.realmManager.deleteWeatherForecastData()
-                   //self.realmManager.saveWeatherForecastData()
+                    self.realmManager.deleteWeatherForecastData()
+                    self.saveHourlyWeatherForecastData()
                 }
             case .failure(let error):
+                self.collectionView.reloadData()
                 print(error.localizedDescription)
-                //self.realmManager.getWeatherForecastData()
             }
-            
         }
     }
     
-    func fetchCurrentWeatherInfo(){
-        networkManager.fetchCurrentWeatherInfo{ result in
-            switch result{
-            case .success(let currentWeatherInfo):
-                DispatchQueue.main.async {
-                    self.currentWeatherInfo = currentWeatherInfo
-                    self.loadCurrentLocationData()
-                    //self.realmManager.deleteWeatherInfoData()
-                   // self.realmManager.saveWeatherInfoData()
-                    
-                }
-            case .failure(let error):
-                print(error.localizedDescription)
-                //self.realmManager.getWeatherInfoData()
-            }
-        }
-       
-    }
+    
     
     func loadCurrentLocationData(){
     
@@ -136,7 +152,57 @@ class ViewController: UIViewController {
             
         }
     }
+    
+    //Realm
+    func saveWeatherInfoData(){
+        
+    let weatherInfo = WeatherInfoRealmClass()
+        weatherInfo.cityName = self.cityNameString
+        weatherInfo.temperature = "\(currentWeatherInfo?.main.temp)"
+        weatherInfo.icon = currentWeatherInfo?.weather[0].icon
+        weatherInfo.weatherType = currentWeatherInfo?.weather[0].main
+        
+      try! realm.write{
+      realm.add(weatherInfo)
+      }
+  }
+    
+    func saveHourlyWeatherForecastData(){
+        let weatherForecastInfoSize : Int? = weatherForecastInfo?.list.count
+    
+        for i in 0..<(weatherForecastInfoSize ?? 3){
+                let weatherForecastData = HourlyWeatherForecastRealmClass()
+                weatherForecastData.time = weatherForecastInfo?.list[i].dt_txt
+                weatherForecastData.temperature = "\(weatherForecastInfo?.list[i].main.temp)"
+                weatherForecastData.icon = weatherForecastInfo?.list[i].weather[0].icon
+                weatherForecastData.windSpeed = "\(weatherForecastInfo?.list[i].wind.speed)"
+                
+                try! realm.write{
+                    realm.add(weatherForecastData)
+                }
+        }
+    }
+    
+    func getWeatherInfoData(){
+        let weatherInfoData = realm.objects(WeatherInfoRealmClass.self)
 
+        for i in weatherInfoData {
+            self.cityName.text = i.cityName
+            self.temperature.text = i.temperature
+            
+            let imageUrlString = "https://openweathermap.org/img/w/" + (i.icon ?? "") + ".png"
+            let imageUrl = URL(string:  imageUrlString)
+            
+            URLSession.shared.dataTask(with: imageUrl!) { data, _, error in
+                if let imageData = data, let image = UIImage(data: imageData){
+                    DispatchQueue.main.sync{
+                        self.icon.image = image
+                    }
+                }
+            }.resume()
+            self.weatherType.text = i.weatherType
+        }
+    }
 }
 
 extension ViewController : UICollectionViewDelegate, UICollectionViewDataSource{
@@ -150,40 +216,12 @@ extension ViewController : UICollectionViewDelegate, UICollectionViewDataSource{
         guard indexPath.row < (weatherForecastInfo?.list.count)! else{
             return cell
         }
-        
-        let dateString = weatherForecastInfo?.list[indexPath.row].dt_txt ?? ""
-
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-
-        if let date = dateFormatter.date(from: dateString) {
-            dateFormatter.dateFormat = "h:mm a"
-            let formattedDateString = dateFormatter.string(from: date)
-            cell.time.text =  formattedDateString
+        guard ((weatherForecastInfo?.list.count) != nil) else{
+            cell.getHourlyWeatherForecastData()
+            return cell
         }
-       
-        let tempInCelcious = (weatherForecastInfo?.list[indexPath.row].main.temp ?? 0.0) - 273.15
-        let temp = String(format: "%.2f", tempInCelcious)
-        cell.temperature.text = String(temp) + "°C"
-    
-        if let windSpeed = weatherForecastInfo?.list[indexPath.row].wind.speed{
-            cell.windSpeed.text = "\(windSpeed) Km/H"
-        }else{
-            cell.windSpeed.text = ""
-        }
-        
-        var imageUrlString = "https://openweathermap.org/img/w/" + (weatherForecastInfo?.list[indexPath.row].weather[0].icon)! + ".png"
-        let imageUrl = URL(string:  imageUrlString)
-        
-        URLSession.shared.dataTask(with: imageUrl!) { data, _, error in
-            if let imageData = data, let image = UIImage(data: imageData){
-                DispatchQueue.main.sync{
-                    cell.imageView.image = image
-                }
-            }
-        }.resume()
-        
-    
+        let data = weatherForecastInfo?.list[indexPath.row]
+        cell.updateCollectionViewWithData(withData: data!)
         return cell
     }
     
