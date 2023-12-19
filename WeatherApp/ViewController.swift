@@ -13,11 +13,11 @@ class ViewController: UIViewController {
 
     var lat : Double = 0.0
     var long : Double = 0.0
+    var cnt = 0
     let locationManager = CLLocationManager()
     var cityNameString : String = ""
     var realmManager = RealmManager()
     let realm = try! Realm()
-    
     let networkManager = NetworkManager()
     var weatherForecastInfo : WeatherForecastResponse? = nil
     var currentWeatherInfo : CurrentWeatherInfoResponse? = nil
@@ -35,7 +35,6 @@ class ViewController: UIViewController {
     @IBOutlet var weatherForecastButton : UIButton!
     
     @IBAction func SearchCityButton(){
-       // let vc = self.storyboard?.instantiateViewController(withIdentifier: "LocationSearchViewController") as! LocationSearchViewController
         let vc = self.storyboard?.instantiateViewController(withIdentifier: "LocationSearchViewController") as! LocationSearchViewController
         self.navigationController?.pushViewController(vc, animated: true)
         
@@ -60,7 +59,10 @@ class ViewController: UIViewController {
         setColorForButton()
         fetchCurrentWeatherInfo()
         fetchWeatherForecastInfo()
-        getCurrentLocation()
+        if(cnt == 0){
+            getCurrentLocation()
+        }
+        
     }
     
     func setColorForButton(){
