@@ -9,10 +9,14 @@ import Foundation
 
 class NetworkManager{
     
-    public func fetchWeatherForecastInfo(
+    
+    
+    public func fetchWeatherForecastInfo( 
+        latitude : Double,
+        longitude : Double,
         completion : @escaping (Result<WeatherForecastResponse, Error>) -> ()
     ){
-        let urlString = "https://api.openweathermap.org/data/2.5/forecast?lat=23.8041&lon=90.4152&appid=821f770339f2c200486a644b17bf970a"
+        let urlString = "https://api.openweathermap.org/data/2.5/forecast?lat=\(latitude)&lon=\(longitude)&appid=821f770339f2c200486a644b17bf970a"
         let url = URL(string: urlString)
         
         URLSession.shared.dataTask(with: url!) { data, _, error in
@@ -30,9 +34,11 @@ class NetworkManager{
     }
     
     public func fetchCurrentWeatherInfo(
+        latitude : Double,
+        longitude : Double,
         completion : @escaping (Result<CurrentWeatherInfoResponse, Error>) -> ()
     ){
-        let urlString = "https://api.openweathermap.org/data/2.5/weather?lat=23.8041&lon=90.4152&appid=821f770339f2c200486a644b17bf970a"
+        let urlString = "https://api.openweathermap.org/data/2.5/weather?lat=\(latitude)&lon=\(longitude)&appid=821f770339f2c200486a644b17bf970a"
         let url = URL(string: urlString)
         
         URLSession.shared.dataTask(with: url!) { data, _, error in

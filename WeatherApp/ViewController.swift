@@ -11,8 +11,8 @@ import RealmSwift
 
 class ViewController: UIViewController {
 
-    var lat : Double = 0.0
-    var long : Double = 0.0
+    var lat = 0.0
+    var long = 0.0
     var cnt = 0
     let locationManager = CLLocationManager()
     var cityNameString : String = ""
@@ -65,6 +65,7 @@ class ViewController: UIViewController {
         
     }
     
+    
     func setColorForButton(){
         searchCityButton.setTitle("Click Here to Search City", for: .normal)
         searchCityButton.setTitleColor(UIColor.white, for: .normal)
@@ -74,8 +75,8 @@ class ViewController: UIViewController {
     }
     
     
-    func fetchCurrentWeatherInfo(){
-        networkManager.fetchCurrentWeatherInfo{ result in
+    func fetchCurrentWeatherInfo() {
+        networkManager.fetchCurrentWeatherInfo(latitude: lat, longitude: long){ result in
             switch result{
             case .success(let currentWeatherInfo):
                 DispatchQueue.main.async {
@@ -83,7 +84,7 @@ class ViewController: UIViewController {
                     self.loadCurrentLocationData()
                     self.realmManager.deleteWeatherInfoData()
                     self.saveWeatherInfoData()
-                    
+
                 }
             case .failure(let error):
                 self.getWeatherInfoData()
@@ -94,7 +95,7 @@ class ViewController: UIViewController {
     }
     
     func fetchWeatherForecastInfo(){
-        networkManager.fetchWeatherForecastInfo{ result in
+        networkManager.fetchWeatherForecastInfo(latitude: lat, longitude: long){ result in
             switch result{
             case .success(let hourlyWeatherInfo):
                 DispatchQueue.main.async {
@@ -230,12 +231,14 @@ extension ViewController : UICollectionViewDelegate, UICollectionViewDataSource{
 }
 
 extension ViewController : CLLocationManagerDelegate{
-    
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let locationValue : CLLocationCoordinate2D = manager.location?.coordinate else{return}
+        ConstantKeys.shared.latitude = locationValue.latitude
+        ConstantKeys.shared.latitude = locationValue.longitude
         self.lat = locationValue.latitude
         self.long = locationValue.longitude
         self.getCityName()
+        //self.getCurrentLocation()
     }
 }
 

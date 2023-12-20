@@ -38,7 +38,7 @@ class WeatherForecastViewController: UIViewController{
     }
     
     func fetchWeatherForecastInfo(){
-        networkManager.fetchWeatherForecastInfo{ result in
+        networkManager.fetchWeatherForecastInfo(latitude : ConstantKeys.shared.latitude, longitude : ConstantKeys.shared.longitude){ result in
             switch result{
             case .success(let weatherForecastInfo):
                 DispatchQueue.main.async {
@@ -106,7 +106,6 @@ class WeatherForecastViewController: UIViewController{
     
     
     //realm
-    
     func saveWeatherForecastData(){
         var weatherForecastInfoSize : Int? = weatherForecastInfo?.list.count
         

@@ -20,6 +20,7 @@
 		BF323A8E2B202A2B0035BA09 /* WeatherApp.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = BF323A8C2B202A2B0035BA09 /* WeatherApp.xcdatamodeld */; };
 		BF323A902B202A2D0035BA09 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BF323A8F2B202A2D0035BA09 /* Assets.xcassets */; };
 		BF323A932B202A2D0035BA09 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BF323A912B202A2D0035BA09 /* LaunchScreen.storyboard */; };
+		BFA076A82B32BD1900D2F55E /* ConstantKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA076A72B32BD1900D2F55E /* ConstantKeys.swift */; };
 		BFE4001C2B2B0AB400762F58 /* RealmManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE4001B2B2B0AB400762F58 /* RealmManager.swift */; };
 		BFE4001E2B2B0B5900762F58 /* WeatherInfoRealmClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE4001D2B2B0B5900762F58 /* WeatherInfoRealmClass.swift */; };
 		BFE400202B2B0B7200762F58 /* WeatherForecastRealmClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE4001F2B2B0B7200762F58 /* WeatherForecastRealmClass.swift */; };
@@ -48,6 +49,7 @@
 		BF323A8F2B202A2D0035BA09 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BF323A922B202A2D0035BA09 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		BF323A942B202A2D0035BA09 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BFA076A72B32BD1900D2F55E /* ConstantKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConstantKeys.swift; sourceTree = "<group>"; };
 		BFE4001B2B2B0AB400762F58 /* RealmManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmManager.swift; sourceTree = "<group>"; };
 		BFE4001D2B2B0B5900762F58 /* WeatherInfoRealmClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherInfoRealmClass.swift; sourceTree = "<group>"; };
 		BFE4001F2B2B0B7200762F58 /* WeatherForecastRealmClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherForecastRealmClass.swift; sourceTree = "<group>"; };
@@ -129,6 +131,7 @@
 				BFE4001D2B2B0B5900762F58 /* WeatherInfoRealmClass.swift */,
 				BFE4001F2B2B0B7200762F58 /* WeatherForecastRealmClass.swift */,
 				BFE400212B2B0EC100762F58 /* HourlyWeatherForecastRealmClass.swift */,
+				BFA076A72B32BD1900D2F55E /* ConstantKeys.swift */,
 			);
 			path = WeatherApp;
 			sourceTree = "<group>";
@@ -253,6 +256,7 @@
 				BFFB16032B26CE4A005454D7 /* WeatherForecastDataTableViewCell.swift in Sources */,
 				BF1FD17F2B25EA0A002D71A5 /* CurrentWeatherInfoModel.swift in Sources */,
 				BF1FD1772B25BEC7002D71A5 /* NetworkManager.swift in Sources */,
+				BFA076A82B32BD1900D2F55E /* ConstantKeys.swift in Sources */,
 				BFE4001E2B2B0B5900762F58 /* WeatherInfoRealmClass.swift in Sources */,
 				BF1FD1742B25ABF8002D71A5 /* WeatherForecastCollectionViewCell.swift in Sources */,
 				BF1FD1812B25EA32002D71A5 /* WeatherForecastModel.swift in Sources */,
