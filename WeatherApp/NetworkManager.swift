@@ -9,8 +9,6 @@ import Foundation
 
 class NetworkManager{
     
-    
-    
     public func fetchWeatherForecastInfo( 
         latitude : Double,
         longitude : Double,

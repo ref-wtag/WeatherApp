@@ -10,6 +10,7 @@ import RealmSwift
 
 class WeatherForecastViewController: UIViewController{
 
+    
     let networkManager = NetworkManager()
     var realmManager = RealmManager()
     let realm = try! Realm()
@@ -28,6 +29,7 @@ class WeatherForecastViewController: UIViewController{
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         let nib = UINib(nibName: "WeatherForecastDataTableViewCell", bundle: nil)
         tablewView.register(nib, forCellReuseIdentifier: "cell")
         
@@ -39,6 +41,7 @@ class WeatherForecastViewController: UIViewController{
     
     func fetchWeatherForecastInfo(){
         networkManager.fetchWeatherForecastInfo(latitude : ConstantKeys.shared.latitude, longitude : ConstantKeys.shared.longitude){ result in
+            
             switch result{
             case .success(let weatherForecastInfo):
                 DispatchQueue.main.async {
@@ -49,9 +52,9 @@ class WeatherForecastViewController: UIViewController{
                     self.saveWeatherForecastData()
                 }
             case .failure(let error):
-                self.getWeatherForecastData()
-                self.tablewView.reloadData()
-                print(error.localizedDescription)
+                 self.getWeatherForecastData()
+                 self.tablewView.reloadData()
+                print("error is : \(error.localizedDescription)")
             }
             
         }

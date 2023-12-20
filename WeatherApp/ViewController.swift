@@ -13,7 +13,6 @@ class ViewController: UIViewController {
 
     var lat = 0.0
     var long = 0.0
-    var cnt = 0
     let locationManager = CLLocationManager()
     var cityNameString : String = ""
     var realmManager = RealmManager()
@@ -55,15 +54,20 @@ class ViewController: UIViewController {
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.backgroundColor = UIColor.clear
-    
+        getCurrentLocation()
         setColorForButton()
-        fetchCurrentWeatherInfo()
-        fetchWeatherForecastInfo()
-        if(cnt == 0){
-            getCurrentLocation()
-        }
         
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        self.lat = ConstantKeys.shared.latitude
+        self.long = ConstantKeys.shared.longitude
+        self.cityNameString = ConstantKeys.shared.cityName
+        self.cityName.text = ConstantKeys.shared.cityName
+        fetchCurrentWeatherInfo()
+        fetchWeatherForecastInfo()
+    }
+    
     
     
     func setColorForButton(){
@@ -152,6 +156,7 @@ class ViewController: UIViewController {
         guard let city = city, let country = country, error == nil else { return }
             self.cityName.text = city
             self.cityNameString = city
+            ConstantKeys.shared.cityName = city
             
         }
     }
@@ -232,13 +237,17 @@ extension ViewController : UICollectionViewDelegate, UICollectionViewDataSource{
 
 extension ViewController : CLLocationManagerDelegate{
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        
         guard let locationValue : CLLocationCoordinate2D = manager.location?.coordinate else{return}
         ConstantKeys.shared.latitude = locationValue.latitude
-        ConstantKeys.shared.latitude = locationValue.longitude
+        ConstantKeys.shared.longitude = locationValue.longitude
         self.lat = locationValue.latitude
         self.long = locationValue.longitude
+        
+        fetchCurrentWeatherInfo()
+        fetchWeatherForecastInfo()
+        
         self.getCityName()
-        //self.getCurrentLocation()
     }
 }
 
