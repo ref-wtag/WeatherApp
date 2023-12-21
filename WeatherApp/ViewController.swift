@@ -20,6 +20,8 @@ class ViewController: UIViewController {
     let networkManager = NetworkManager()
     var weatherForecastInfo : WeatherForecastResponse? = nil
     var currentWeatherInfo : CurrentWeatherInfoResponse? = nil
+    var currentStatus = CLLocationManager.authorizationStatus()
+    
     
     @IBOutlet var collectionView : UICollectionView!
     
@@ -138,16 +140,54 @@ class ViewController: UIViewController {
     }
     
     func getCurrentLocation(){
-        self.locationManager.requestAlwaysAuthorization()
-        self.locationManager.requestWhenInUseAuthorization()
+    
+        switch CLLocationManager.authorizationStatus() {
+            
+        case .denied, .restricted:
+            resetInitialScreen()
+            showPermissionAlert()
+            
+        case .authorizedWhenInUse, .authorizedAlways:
+            locationManager.requestWhenInUseAuthorization()
+            
+        case .notDetermined:
+            locationManager.requestWhenInUseAuthorization()
+            locationManager.requestAlwaysAuthorization()
+            resetInitialScreen()
+        }
         
         DispatchQueue.global().async { [self] in
-        if CLLocationManager.locationServicesEnabled() {
-            locationManager.delegate = self
-            locationManager.startUpdatingLocation()
-        }
+            if CLLocationManager.locationServicesEnabled() {
+                locationManager.delegate = self
+                locationManager.startUpdatingLocation()
+            }
         }
     }
+    
+    func resetInitialScreen(){
+        collectionView.isHidden = true
+        weatherForecastButton.isHidden = true
+        weatherLabel.isHidden = true
+        searchCityButton.isHidden = true
+        weatherType.isHidden = true
+        temperature.isHidden = true
+        icon.isHidden = true
+    }
+    
+    func showPermissionAlert(){
+       let alertController = UIAlertController(title: "Location Permission Required", message: "Please enable location permissions in settings.", preferredStyle: UIAlertController.Style.alert)
+
+       let okAction = UIAlertAction(title: "Settings", style: .default, handler: {(cAlertAction) in
+           UIApplication.shared.open(URL(string:UIApplication.openSettingsURLString)!)
+       })
+
+       let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel)
+       alertController.addAction(cancelAction)
+
+       alertController.addAction(okAction)
+
+       self.present(alertController, animated: true, completion: nil)
+   }
     
     func getCityName(){
         let location = CLLocation(latitude: lat, longitude: long)
@@ -160,6 +200,8 @@ class ViewController: UIViewController {
             
         }
     }
+    
+    
     
     //Realm
     func saveWeatherInfoData(){
@@ -237,6 +279,14 @@ extension ViewController : UICollectionViewDelegate, UICollectionViewDataSource{
 
 extension ViewController : CLLocationManagerDelegate{
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+    
+        collectionView.isHidden = false
+        weatherForecastButton.isHidden = false
+        weatherLabel.isHidden = false
+        searchCityButton.isHidden = false
+        weatherType.isHidden = false
+        temperature.isHidden = false
+        icon.isHidden = false
         
         guard let locationValue : CLLocationCoordinate2D = manager.location?.coordinate else{return}
         ConstantKeys.shared.latitude = locationValue.latitude
@@ -249,6 +299,7 @@ extension ViewController : CLLocationManagerDelegate{
         
         self.getCityName()
     }
+
 }
 
 extension CLLocation{
