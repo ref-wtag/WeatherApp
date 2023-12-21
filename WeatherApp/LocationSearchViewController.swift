@@ -1,48 +1,159 @@
+
+
+// Copyright © 2023 Mapbox. All rights reserved.
+
 import UIKit
 import MapboxSearch
-import MapboxSearchUI
- 
+import MapKit
 
-class LocationSearchViewController: UIViewController {
-let searchController = MapboxSearchController()
- 
-override func viewDidLoad() {
-super.viewDidLoad()
-searchController.delegate = self
-let panelController = MapboxPanelController(rootViewController: searchController)
-addChild(panelController)
-}
-}
- 
-extension LocationSearchViewController : SearchControllerDelegate{
-    func searchResultSelected(_ searchResult: MapboxSearch.SearchResult) {
-        print("--------------------------------------")
-        print(searchResult)
-        print(searchResult.address)
-        print(searchResult.address?.region)
-        print(searchResult.coordinate.latitude)
-        print(searchResult.coordinate.longitude)
-        
-        print("--------------------------------------")
-        
-        //navigationController?.popViewController(animated: true)
-        
-        //dismiss(animated: true, completion: nil)
-        
-        let vc = self.storyboard?.instantiateViewController(withIdentifier: "vcc") as! ViewController
-        vc.lat = searchResult.coordinate.latitude
-        vc.long = searchResult.coordinate.longitude
-        vc.cityNameString = searchResult.address?.region ?? "No city Name"
-        vc.cnt = 2
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
+final class LocationSearchViewController : UIViewController {
+    @IBOutlet private var tableView: UITableView!
+    @IBOutlet private var messageLabel: UILabel!
     
-    func categorySearchResultsReceived(category: MapboxSearchUI.SearchCategory, results: [MapboxSearch.SearchResult]) {
-        
-    }
+    private lazy var placeAutocomplete = PlaceAutocomplete(accessToken: "sk.eyJ1IjoicmVmYXQwMDEiLCJhIjoiY2xxM2UxZTU0MGF0bjJpcXVxYTRwa3A5NiJ9.RGTRasPksRMwDU70ttlhXg")
     
-    func userFavoriteSelected(_ userFavorite: MapboxSearch.FavoriteRecord) {
-        
+    private var cachedSuggestions: [PlaceAutocomplete.Suggestion] = []
+
+    let locationManager = CLLocationManager()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+       // locationManager.requestWhenInUseAuthorization()
+        //locationManager.startUpdatingLocation()
+        configureUI()
     }
 }
 
+// MARK: - UISearchResultsUpdating
+extension LocationSearchViewController : UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        guard
+            let text = searchController.searchBar.text
+        else {
+            cachedSuggestions = []
+            
+            reloadData()
+            return
+        }
+
+        
+        
+        
+        placeAutocomplete.suggestions(
+            for: text
+           //proximity: CLLocationCoordinate2D(latitude: 23.8041, longitude: 90.4152)
+           // proximity: locationManager.location?.coordinate,
+            // locationManager.location?.coordinate,
+            //filterBy: .init(types: [.POI], navigationProfile: .driving)
+            //filterBy: .init(types: [.POI], navigationProfile: .none)
+        ) { [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let suggestions):
+                self.cachedSuggestions = suggestions
+                print("cachedSuggestions : \(cachedSuggestions)")
+                self.reloadData()
+                
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
+}
+
+// MARK: - UITableViewDataSource & UITableViewDelegate
+extension LocationSearchViewController : UITableViewDataSource, UITableViewDelegate {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        cachedSuggestions.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cellIdentifier = "suggestion-tableview-cell"
+        
+        let tableViewCell: UITableViewCell
+        if let cachedTableViewCell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier) {
+            tableViewCell = cachedTableViewCell
+        } else {
+            tableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: cellIdentifier)
+        }
+        
+        let suggestion = cachedSuggestions[indexPath.row]
+
+        tableViewCell.textLabel?.text = suggestion.name
+        tableViewCell.accessoryType = .disclosureIndicator
+
+        var description = suggestion.description ?? ""
+        if let distance = suggestion.distance {
+            //description += "\n\(PlaceAutocomplete.Result.distanceFormatter.string(fromDistance: distance))"
+        }
+        if let estimatedTime = suggestion.estimatedTime {
+            //description += "\n\(PlaceAutocomplete.Result.measurumentFormatter.string(from: estimatedTime))"
+        }
+
+        tableViewCell.detailTextLabel?.text = description
+        tableViewCell.detailTextLabel?.textColor = UIColor.darkGray
+        tableViewCell.detailTextLabel?.numberOfLines = 4
+        
+        return tableViewCell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+
+//        placeAutocomplete.select(suggestion: cachedSuggestions[indexPath.row]) { [weak self] result in
+//            switch result {
+//            case .success(let suggestionResult):
+//                let resultVC = PlaceAutocompleteResultViewController.instantiate(with: suggestionResult)
+//                self?.navigationController?.pushViewController(resultVC, animated: true)
+//
+//            case .failure(let error):
+//                print("Suggestion selection error \(error)")
+//            }
+//        }
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        100
+    }
+}
+
+// MARK: - Private
+private extension LocationSearchViewController {
+    func reloadData() {
+        messageLabel.isHidden = !cachedSuggestions.isEmpty
+        tableView.isHidden = cachedSuggestions.isEmpty
+
+        tableView.reloadData()
+    }
+    
+    func configureUI() {
+        configureSearchController()
+        //configureTableView()
+       // configureMessageLabel()
+    }
+    
+    func configureSearchController() {
+        let searchController = UISearchController(searchResultsController: nil)
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.placeholder = "Search"
+        searchController.searchBar.returnKeyType = .done
+
+        navigationItem.searchController = searchController
+    }
+    
+    func configureMessageLabel() {
+        messageLabel.text = "Start typing to get autocomplete suggestions"
+    }
+    
+    func configureTableView() {
+        tableView.tableFooterView = UIView(frame: .zero)
+        
+        tableView.delegate = self
+        tableView.dataSource = self
+        
+        tableView.isHidden = true
+    }
+}

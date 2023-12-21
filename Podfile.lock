@@ -21,6 +21,7 @@ PODS:
 
 DEPENDENCIES:
   - MapboxMaps (< 11.0.0)
+  - MapboxSearch (< 2.0, >= 1.0.0-beta)
   - MapboxSearchUI (< 2.0, >= 1.0.0-rc.8)
   - RealmSwift (= 10.45.0)
 
@@ -47,6 +48,6 @@ SPEC CHECKSUMS:
   RealmSwift: e5ae14b314f3569f053563f88366d6f07e9ade62
   Turf: 13d1a92d969ca0311bbc26e8356cca178ce95da2
 
-PODFILE CHECKSUM: 92645268bd9c107120918a610baaed8d1ef1a6a4
+PODFILE CHECKSUM: f86334dcb73589d85acb7bce548e84b78ca02766
 
 COCOAPODS: 1.14.3
