@@ -16,8 +16,6 @@ addChild(panelController)
  
 extension LocationSearchViewController : SearchControllerDelegate{
     func searchResultSelected(_ searchResult: MapboxSearch.SearchResult) {
-
-        let vc = self.storyboard?.instantiateViewController(withIdentifier: "vcc") as! ViewController
         ConstantKeys.shared.latitude = searchResult.coordinate.latitude
         ConstantKeys.shared.longitude = searchResult.coordinate.longitude
         ConstantKeys.shared.cityName = searchResult.address?.region ?? searchResult.name
