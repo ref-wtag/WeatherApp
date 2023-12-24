@@ -1,14 +1,18 @@
+//
+//  LocationSearchViewController.swift
+//  LocationSearch
+//
+//  Created by Refat E Ferdous on 12/21/23.
+//
 
-
-// Copyright © 2023 Mapbox. All rights reserved.
+import Foundation
 
 import UIKit
 import MapboxSearch
 import MapKit
 
-final class LocationSearchViewController : UIViewController {
+class LocationSearchViewController : UIViewController {
     @IBOutlet private var tableView: UITableView!
-    @IBOutlet private var messageLabel: UILabel!
     
     private lazy var placeAutocomplete = PlaceAutocomplete(accessToken: "sk.eyJ1IjoicmVmYXQwMDEiLCJhIjoiY2xxM2UxZTU0MGF0bjJpcXVxYTRwa3A5NiJ9.RGTRasPksRMwDU70ttlhXg")
     
@@ -18,9 +22,6 @@ final class LocationSearchViewController : UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-       // locationManager.requestWhenInUseAuthorization()
-        //locationManager.startUpdatingLocation()
         configureUI()
     }
 }
@@ -36,9 +37,6 @@ extension LocationSearchViewController : UISearchResultsUpdating {
             reloadData()
             return
         }
-
-        
-        
         
         placeAutocomplete.suggestions(
             for: text
@@ -85,12 +83,6 @@ extension LocationSearchViewController : UITableViewDataSource, UITableViewDeleg
         tableViewCell.accessoryType = .disclosureIndicator
 
         var description = suggestion.description ?? ""
-        if let distance = suggestion.distance {
-            //description += "\n\(PlaceAutocomplete.Result.distanceFormatter.string(fromDistance: distance))"
-        }
-        if let estimatedTime = suggestion.estimatedTime {
-            //description += "\n\(PlaceAutocomplete.Result.measurumentFormatter.string(from: estimatedTime))"
-        }
 
         tableViewCell.detailTextLabel?.text = description
         tableViewCell.detailTextLabel?.textColor = UIColor.darkGray
@@ -101,17 +93,7 @@ extension LocationSearchViewController : UITableViewDataSource, UITableViewDeleg
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-
-//        placeAutocomplete.select(suggestion: cachedSuggestions[indexPath.row]) { [weak self] result in
-//            switch result {
-//            case .success(let suggestionResult):
-//                let resultVC = PlaceAutocompleteResultViewController.instantiate(with: suggestionResult)
-//                self?.navigationController?.pushViewController(resultVC, animated: true)
-//
-//            case .failure(let error):
-//                print("Suggestion selection error \(error)")
-//            }
-//        }
+        self.navigationController?.popViewController(animated: true)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -122,16 +104,13 @@ extension LocationSearchViewController : UITableViewDataSource, UITableViewDeleg
 // MARK: - Private
 private extension LocationSearchViewController {
     func reloadData() {
-        messageLabel.isHidden = !cachedSuggestions.isEmpty
         tableView.isHidden = cachedSuggestions.isEmpty
-
         tableView.reloadData()
     }
     
     func configureUI() {
         configureSearchController()
-        //configureTableView()
-       // configureMessageLabel()
+        configureTableView()
     }
     
     func configureSearchController() {
@@ -140,20 +119,14 @@ private extension LocationSearchViewController {
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Search"
         searchController.searchBar.returnKeyType = .done
-
-        navigationItem.searchController = searchController
+        self.navigationItem.searchController = searchController
+        self.navigationItem.hidesSearchBarWhenScrolling = false
     }
     
-    func configureMessageLabel() {
-        messageLabel.text = "Start typing to get autocomplete suggestions"
-    }
     
     func configureTableView() {
         tableView.tableFooterView = UIView(frame: .zero)
-        
         tableView.delegate = self
         tableView.dataSource = self
-        
-        tableView.isHidden = true
     }
 }
