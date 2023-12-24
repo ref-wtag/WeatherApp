@@ -83,6 +83,10 @@ extension LocationSearchViewController : UITableViewDataSource, UITableViewDeleg
         tableViewCell.accessoryType = .disclosureIndicator
 
         var description = suggestion.description ?? ""
+        
+        print("--------------------------------")
+        print("\(suggestion)")
+        print("--------------------------------")
 
         tableViewCell.detailTextLabel?.text = description
         tableViewCell.detailTextLabel?.textColor = UIColor.darkGray
@@ -93,6 +97,10 @@ extension LocationSearchViewController : UITableViewDataSource, UITableViewDeleg
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        
+        let suggstion = cachedSuggestions[indexPath.row]
+        ConstantKeys.shared.latitude = suggstion.coordinate.latitude
+        ConstantKeys.shared.longitude = suggstion.coordinate.longitude
         self.navigationController?.popViewController(animated: true)
     }
     
