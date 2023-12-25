@@ -15,17 +15,17 @@ class RealmManager{
     //delete
     func deleteWeatherInfoData(){
         try! realm.write{
-            realm.delete(realm.objects(WeatherInfoRealmClass.self))
+            realm.delete(realm.objects(WeatherInfoRealm.self))
         }
         
         try! realm.write{
-            realm.delete(realm.objects(HourlyWeatherForecastRealmClass.self))
+            realm.delete(realm.objects(HourlyWeatherForecastRealm.self))
         }
     }
     
     func deleteWeatherForecastData(){
         try! realm.write{
-            realm.delete(realm.objects(WeatherForecastRealmClass.self))
+            realm.delete(realm.objects(WeatherForecastRealm.self))
         }
     }
     

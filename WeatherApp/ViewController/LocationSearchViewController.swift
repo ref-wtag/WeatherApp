@@ -14,7 +14,8 @@ addChild(panelController)
 }
 }
  
-extension LocationSearchViewController : SearchControllerDelegate{
+extension LocationSearchViewController : SearchControllerDelegate {
+    
     func searchResultSelected(_ searchResult: MapboxSearch.SearchResult) {
         ConstantKeys.shared.latitude = searchResult.coordinate.latitude
         ConstantKeys.shared.longitude = searchResult.coordinate.longitude

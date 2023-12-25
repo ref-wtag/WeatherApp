@@ -8,7 +8,7 @@
 import Foundation
 import RealmSwift
 
-class WeatherForecastRealmClass : Object {
+class WeatherForecastRealm : Object {
     @objc dynamic var cityName : String?
     @objc dynamic var temperature : String?
     @objc dynamic var weatherType : String?

@@ -114,7 +114,7 @@ class WeatherForecastViewController: UIViewController{
         
         for i in 0...weatherForecastInfoSize!{
             
-            let weatherForecastData = WeatherForecastRealmClass()
+            let weatherForecastData = WeatherForecastRealm()
                 weatherForecastData.cityName = self.cityNameString
                 weatherForecastData.temperature = "\(weatherForecastInfo?.list[0].main.temp)"
                 weatherForecastData.weatherType = weatherForecastInfo?.list[0].weather[0].main
@@ -131,7 +131,7 @@ class WeatherForecastViewController: UIViewController{
     
   }
     func getWeatherForecastData(){
-        let weatherData = realm.objects(WeatherForecastRealmClass.self)
+        let weatherData = realm.objects(WeatherForecastRealm.self)
         
         for i in weatherData {
             self.cityName.text = i.cityName

@@ -22,7 +22,7 @@ class WeatherForecastCollectionViewCell: UICollectionViewCell {
     }
     
     func getHourlyWeatherForecastData(){
-        let weatherForecastData = realm.objects(HourlyWeatherForecastRealmClass.self)
+        let weatherForecastData = realm.objects(HourlyWeatherForecastRealm.self)
         
         for i in weatherForecastData {
             self.time.text = i.time

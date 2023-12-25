@@ -206,7 +206,7 @@ class ViewController: UIViewController {
     //Realm
     func saveWeatherInfoData(){
         
-    let weatherInfo = WeatherInfoRealmClass()
+    let weatherInfo = WeatherInfoRealm()
         weatherInfo.cityName = self.cityNameString
         weatherInfo.temperature = "\(currentWeatherInfo?.main.temp)"
         weatherInfo.icon = currentWeatherInfo?.weather[0].icon
@@ -221,7 +221,7 @@ class ViewController: UIViewController {
         let weatherForecastInfoSize : Int? = weatherForecastInfo?.list.count
     
         for i in 0..<(weatherForecastInfoSize ?? 3){
-                let weatherForecastData = HourlyWeatherForecastRealmClass()
+                let weatherForecastData = HourlyWeatherForecastRealm()
                 weatherForecastData.time = weatherForecastInfo?.list[i].dt_txt
                 weatherForecastData.temperature = "\(weatherForecastInfo?.list[i].main.temp)"
                 weatherForecastData.icon = weatherForecastInfo?.list[i].weather[0].icon
@@ -234,7 +234,7 @@ class ViewController: UIViewController {
     }
     
     func getWeatherInfoData(){
-        let weatherInfoData = realm.objects(WeatherInfoRealmClass.self)
+        let weatherInfoData = realm.objects(WeatherInfoRealm.self)
 
         for i in weatherInfoData {
             self.cityName.text = i.cityName

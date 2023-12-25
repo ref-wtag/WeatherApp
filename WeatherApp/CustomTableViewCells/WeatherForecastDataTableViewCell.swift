@@ -29,7 +29,7 @@ class WeatherForecastDataTableViewCell: UITableViewCell {
     
 
     func getWeatherForecastDataInTableView(){
-        let weatherData = realm.objects(WeatherForecastRealmClass.self)
+        let weatherData = realm.objects(WeatherForecastRealm.self)
         
         for i in weatherData {
         self.dateValue.text = i.currentDate
