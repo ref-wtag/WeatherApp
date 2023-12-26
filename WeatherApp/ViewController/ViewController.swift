@@ -197,7 +197,7 @@ class ViewController: UIViewController {
             self.cityName.text = weatherInfoData.cityName
             self.temperature.text = weatherInfoData.temperature
             
-            let imageUrlString = "https://openweathermap.org/img/w/" + (weatherInfoData.icon ?? "") + ".png"
+            let imageUrlString = "\(ConstantKeys.IMAGE_URL)" + (weatherInfoData.icon ?? "") + "\(ConstantKeys.IMAGE_EXTENSION)"
             let imageUrl = URL(string:  imageUrlString)
             
             URLSession.shared.dataTask(with: imageUrl!) { data, _, error in

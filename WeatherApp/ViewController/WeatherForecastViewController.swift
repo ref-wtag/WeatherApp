@@ -95,7 +95,7 @@ class WeatherForecastViewController: UIViewController{
         minMaxTemperature.text = String(temp) + "°C"
         
         
-        let imageUrlString = "https://openweathermap.org/img/w/" + (weatherForecastInfo?.list[0].weather[0].icon ?? "") + ".png"
+        let imageUrlString = "\(ConstantKeys.IMAGE_URL)" + (weatherForecastInfo?.list[0].weather[0].icon ?? "") + "\(ConstantKeys.IMAGE_EXTENSION)"
         let imageUrl = URL(string:  imageUrlString)
         
         URLSession.shared.dataTask(with: imageUrl!) { data, _, error in
@@ -119,7 +119,7 @@ class WeatherForecastViewController: UIViewController{
             self.currentDate.text = weatherData.currentDate
             self.minMaxTemperature.text = "weatherData.minTemperature" + " weatherData.maxTemperature"
             
-            let imageUrlString = "https://openweathermap.org/img/w/" + (weatherData.icon ?? "") + ".png"
+            let imageUrlString = "\(ConstantKeys.IMAGE_URL)" + (weatherData.icon ?? "") + "\(ConstantKeys.IMAGE_EXTENSION)"
             let imageUrl = URL(string:  imageUrlString)
             
             URLSession.shared.dataTask(with: imageUrl!) { data, _, error in

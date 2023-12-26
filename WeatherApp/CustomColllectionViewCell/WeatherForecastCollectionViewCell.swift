@@ -24,11 +24,11 @@ class WeatherForecastCollectionViewCell: UICollectionViewCell {
     func getHourlyWeatherForecastData(){
         let weatherForecastData = realm.objects(HourlyWeatherForecast.self)
         
-        for i in weatherForecastData {
-            self.time.text = i.time
-            self.temperature.text = i.temperature
+        for weatherData in weatherForecastData {
+            self.time.text = weatherData.time
+            self.temperature.text = weatherData.temperature
             
-            let imageUrlString = "https://openweathermap.org/img/w/" + (i.icon ?? "") + ".png"
+            let imageUrlString = "https://openweathermap.org/img/w/" + (weatherData.icon ?? "") + ".png"
             let imageUrl = URL(string:  imageUrlString)
             
             URLSession.shared.dataTask(with: imageUrl!) { data, _, error in
@@ -39,7 +39,7 @@ class WeatherForecastCollectionViewCell: UICollectionViewCell {
                 }
             }.resume()
             
-            self.windSpeed.text = i.windSpeed
+            self.windSpeed.text = weatherData.windSpeed
         }
     }
     

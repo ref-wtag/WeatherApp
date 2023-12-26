@@ -11,7 +11,6 @@ import RealmSwift
 class MainViewModel {
     var realmManager = RealmManager()
     let realm = try! Realm()
-    let networkManager = NetworkManager()
     var weatherForecastInfo : WeatherForecastResponse? = nil
     var currentWeatherInfo : CurrentWeatherInfoResponse? = nil
     var collectionViewData : Observable<WeatherForecastResponse> = Observable(nil)
@@ -19,7 +18,7 @@ class MainViewModel {
     
     
     func fetchCurrentWeatherInfo(lat : Double, lon : Double) {
-        networkManager.fetchCurrentWeatherInfo(latitude : lat, longitude : lon){ result in
+        NetworkManager.shared.fetchCurrentWeatherInfo(latitude : lat, longitude : lon){ result in
             switch result{
             case .success(let currentWeatherInfo):
                 DispatchQueue.main.async {
@@ -37,7 +36,7 @@ class MainViewModel {
     }
     
     func fetchWeatherForecastInfo(lat : Double, lon : Double){
-        networkManager.fetchWeatherForecastInfo(latitude: lat, longitude: lon){ result in
+        NetworkManager.shared.fetchWeatherForecastInfo(latitude: lat, longitude: lon){ result in
             switch result{
             case .success(let hourlyWeatherInfo):
                 DispatchQueue.main.async {

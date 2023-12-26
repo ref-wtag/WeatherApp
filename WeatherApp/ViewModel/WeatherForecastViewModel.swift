@@ -9,8 +9,6 @@ import Foundation
 import RealmSwift
 
 class WeatherForecastViewModel{
-    
-    let networkManager = NetworkManager()
     var realmManager = RealmManager()
     let realm = try! Realm()
     
@@ -20,7 +18,7 @@ class WeatherForecastViewModel{
     
     
     func fetchWeatherForecastInfo(){
-        networkManager.fetchWeatherForecastInfo(latitude : ConstantKeys.shared.latitude, longitude : ConstantKeys.shared.longitude){ result in
+        NetworkManager.shared.fetchWeatherForecastInfo(latitude : ConstantKeys.shared.latitude, longitude : ConstantKeys.shared.longitude){ result in
             
             switch result{
             case .success(let weatherForecastInfo):

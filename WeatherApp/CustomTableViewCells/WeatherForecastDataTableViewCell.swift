@@ -27,13 +27,13 @@ class WeatherForecastDataTableViewCell: UITableViewCell {
     func getWeatherForecastDataInTableView(){
         let weatherData = realm.objects(WeatherForecast.self)
         
-        for i in weatherData {
-        self.dateValue.text = i.currentDate
-        self.timeValue.text = i.time
-        self.weatherType.text = i.weatherType
-        self.minMaxTemperature.text = "i.minTemperature" + " i.maxTemperature"
+        for weatherInfo in weatherData {
+        self.dateValue.text = weatherInfo.currentDate
+        self.timeValue.text = weatherInfo.time
+        self.weatherType.text = weatherInfo.weatherType
+        self.minMaxTemperature.text = "weatherInfo.minTemperature" + " weatherInfo.maxTemperature"
         
-        let imageUrlString2 = "https://openweathermap.org/img/w/" + (i.icon ?? "") + ".png"
+        let imageUrlString2 = "https://openweathermap.org/img/w/" + (weatherInfo.icon ?? "") + ".png"
         let imageUrl2 = URL(string:  imageUrlString2)
         
         URLSession.shared.dataTask(with: imageUrl2!) { data, _, error in
