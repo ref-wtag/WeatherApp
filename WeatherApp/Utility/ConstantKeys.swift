@@ -18,5 +18,5 @@ class ConstantKeys{
     static let APP_ID : String = "821f770339f2c200486a644b17bf970a"
     static let IMAGE_URL : String = "https://openweathermap.org/img/w/"
     static let IMAGE_EXTENSION : String = ".png"
-    
+    static let DATE_FORMAT : String = "yyyy-MM-dd HH:mm:ss"
 }

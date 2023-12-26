@@ -77,7 +77,7 @@ class WeatherForecastViewController: UIViewController{
         
         let dateString = weatherForecastInfo?.list[0].dt_txt ?? ""
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        dateFormatter.dateFormat = ConstantKeys.DATE_FORMAT
         
         if let date = dateFormatter.date(from: dateString) {
             let outputDateFormatter = DateFormatter()
