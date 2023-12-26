@@ -21,15 +21,11 @@ class WeatherForecastDataTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         self.backgroundColor = UIColor.clear
+        
     }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-    }
-    
 
     func getWeatherForecastDataInTableView(){
-        let weatherData = realm.objects(WeatherForecastRealm.self)
+        let weatherData = realm.objects(WeatherForecast.self)
         
         for i in weatherData {
         self.dateValue.text = i.currentDate

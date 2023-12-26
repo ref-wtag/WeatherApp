@@ -15,16 +15,12 @@ class ViewController: UIViewController {
     var long = 0.0
     let locationManager = CLLocationManager()
     var cityNameString : String = ""
-    var realmManager = RealmManager()
-    let realm = try! Realm()
-    let networkManager = NetworkManager()
+    var viewModel = MainViewModel()
     var weatherForecastInfo : WeatherForecastResponse? = nil
     var currentWeatherInfo : CurrentWeatherInfoResponse? = nil
-    var currentStatus = CLLocationManager.authorizationStatus()
-    
+    let realm = try! Realm()
     
     @IBOutlet var collectionView : UICollectionView!
-    
     
     @IBOutlet var  cityName : UILabel!
     @IBOutlet var temperature : UILabel!
@@ -38,7 +34,6 @@ class ViewController: UIViewController {
     @IBAction func SearchCityButton(){
         let vc = self.storyboard?.instantiateViewController(withIdentifier: "LocationSearchViewController") as! LocationSearchViewController
         self.navigationController?.pushViewController(vc, animated: true)
-        
     }
     
     @IBAction func WeatherForecastButton(){
@@ -49,28 +44,60 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print(Realm.Configuration.defaultConfiguration.fileURL)
+        RealmPathPrint()
+        configView()
+        getCurrentLocation()
+        bindViewModel()
+    }
+    
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.lat = ConstantKeys.shared.latitude
+        self.long = ConstantKeys.shared.longitude
+        self.cityNameString = ConstantKeys.shared.cityName
+        self.cityName.text = ConstantKeys.shared.cityName
+        viewModel.fetchCurrentWeatherInfo(lat : self.lat , lon : self.long)
+        viewModel.fetchWeatherForecastInfo(lat : self.lat , lon : self.long)
+    }
+    
+    func bindViewModel(){
+        viewModel.collectionViewData.bind { [weak self] weatherData in
+            guard let self = self,let weatherData = weatherData else{
+                self?.reloadCollectionViewData()
+                return
+            }
+
+            self.weatherForecastInfo = weatherData
+            self.reloadCollectionViewData()
+        }
         
+        viewModel.currentWeatherData.bind { [weak self] weatherInfo in
+            guard let self = self, let weatherInfo = weatherInfo else{
+                self?.getWeatherInfoData()
+                return
+            }
+            
+            self.currentWeatherInfo = weatherInfo
+            self.loadCurrentLocationData()
+        }
+    }
+    
+    func RealmPathPrint(){
+        print(Realm.Configuration.defaultConfiguration.fileURL)
+    }
+    func configView(){
+        setCollectionView()
+        setColorForButton()
+    }
+    
+    func setCollectionView(){
         let nib = UINib(nibName: "WeatherForecastCollectionViewCell", bundle: nil)
         collectionView.register(nib, forCellWithReuseIdentifier: "cell")
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.backgroundColor = UIColor.clear
-        getCurrentLocation()
-        setColorForButton()
-        
     }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        self.lat = ConstantKeys.shared.latitude
-        self.long = ConstantKeys.shared.longitude
-        self.cityNameString = ConstantKeys.shared.cityName
-        self.cityName.text = ConstantKeys.shared.cityName
-        fetchCurrentWeatherInfo()
-        fetchWeatherForecastInfo()
-    }
-    
-    
     
     func setColorForButton(){
         searchCityButton.setTitle("Click Here to Search City", for: .normal)
@@ -80,45 +107,7 @@ class ViewController: UIViewController {
         weatherForecastButton.setTitleColor(UIColor.white, for: .normal)
     }
     
-    
-    func fetchCurrentWeatherInfo() {
-        networkManager.fetchCurrentWeatherInfo(latitude: lat, longitude: long){ result in
-            switch result{
-            case .success(let currentWeatherInfo):
-                DispatchQueue.main.async {
-                    self.currentWeatherInfo = currentWeatherInfo
-                    self.loadCurrentLocationData()
-                    self.realmManager.deleteWeatherInfoData()
-                    self.saveWeatherInfoData()
 
-                }
-            case .failure(let error):
-                self.getWeatherInfoData()
-                print(error.localizedDescription)
-            }
-        }
-       
-    }
-    
-    func fetchWeatherForecastInfo(){
-        networkManager.fetchWeatherForecastInfo(latitude: lat, longitude: long){ result in
-            switch result{
-            case .success(let hourlyWeatherInfo):
-                DispatchQueue.main.async {
-                    self.weatherForecastInfo = hourlyWeatherInfo
-                    self.collectionView.reloadData()
-                    self.realmManager.deleteWeatherForecastData()
-                    self.saveHourlyWeatherForecastData()
-                }
-            case .failure(let error):
-                self.collectionView.reloadData()
-                print(error.localizedDescription)
-            }
-        }
-    }
-    
-    
-    
     func loadCurrentLocationData(){
     
         let tempInCelcious = (currentWeatherInfo?.main.temp ?? 0.0) - 273.15
@@ -201,46 +190,14 @@ class ViewController: UIViewController {
         }
     }
     
-    
-    
-    //Realm
-    func saveWeatherInfoData(){
-        
-    let weatherInfo = WeatherInfoRealm()
-        weatherInfo.cityName = self.cityNameString
-        weatherInfo.temperature = "\(currentWeatherInfo?.main.temp)"
-        weatherInfo.icon = currentWeatherInfo?.weather[0].icon
-        weatherInfo.weatherType = currentWeatherInfo?.weather[0].main
-        
-      try! realm.write{
-      realm.add(weatherInfo)
-      }
-  }
-    
-    func saveHourlyWeatherForecastData(){
-        let weatherForecastInfoSize : Int? = weatherForecastInfo?.list.count
-    
-        for i in 0..<(weatherForecastInfoSize ?? 3){
-                let weatherForecastData = HourlyWeatherForecastRealm()
-                weatherForecastData.time = weatherForecastInfo?.list[i].dt_txt
-                weatherForecastData.temperature = "\(weatherForecastInfo?.list[i].main.temp)"
-                weatherForecastData.icon = weatherForecastInfo?.list[i].weather[0].icon
-                weatherForecastData.windSpeed = "\(weatherForecastInfo?.list[i].wind.speed)"
-                
-                try! realm.write{
-                    realm.add(weatherForecastData)
-                }
-        }
-    }
-    
     func getWeatherInfoData(){
-        let weatherInfoData = realm.objects(WeatherInfoRealm.self)
+        let data = realm.objects(WeatherDataInfo.self)
 
-        for i in weatherInfoData {
-            self.cityName.text = i.cityName
-            self.temperature.text = i.temperature
+        for weatherInfoData in data {
+            self.cityName.text = weatherInfoData.cityName
+            self.temperature.text = weatherInfoData.temperature
             
-            let imageUrlString = "https://openweathermap.org/img/w/" + (i.icon ?? "") + ".png"
+            let imageUrlString = "https://openweathermap.org/img/w/" + (weatherInfoData.icon ?? "") + ".png"
             let imageUrl = URL(string:  imageUrlString)
             
             URLSession.shared.dataTask(with: imageUrl!) { data, _, error in
@@ -250,9 +207,10 @@ class ViewController: UIViewController {
                     }
                 }
             }.resume()
-            self.weatherType.text = i.weatherType
+            self.weatherType.text = weatherInfoData.weatherType
         }
     }
+    
 }
 
 extension ViewController : UICollectionViewDelegate, UICollectionViewDataSource{
@@ -260,6 +218,13 @@ extension ViewController : UICollectionViewDelegate, UICollectionViewDataSource{
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return weatherForecastInfo?.list.count ?? 0
     }
+    
+    func reloadCollectionViewData(){
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
+        }
+    }
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! WeatherForecastCollectionViewCell
         
@@ -288,15 +253,11 @@ extension ViewController : CLLocationManagerDelegate{
         temperature.isHidden = false
         icon.isHidden = false
         
-        guard let locationValue : CLLocationCoordinate2D = manager.location?.coordinate else{return}
+        guard let locationValue : CLLocationCoordinate2D = manager.location?.coordinate else{ return }
         ConstantKeys.shared.latitude = locationValue.latitude
         ConstantKeys.shared.longitude = locationValue.longitude
         self.lat = locationValue.latitude
         self.long = locationValue.longitude
-        
-        fetchCurrentWeatherInfo()
-        fetchWeatherForecastInfo()
-        
         self.getCityName()
     }
 

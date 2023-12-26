@@ -10,12 +10,7 @@ import RealmSwift
 
 class WeatherForecastViewController: UIViewController{
 
-    
-    let networkManager = NetworkManager()
-    var realmManager = RealmManager()
     let realm = try! Realm()
-    var weatherForecastInfo : WeatherForecastResponse? = nil
-    
     @IBOutlet var tablewView : UITableView!
     
     @IBOutlet var cityName : UILabel!
@@ -25,41 +20,46 @@ class WeatherForecastViewController: UIViewController{
     @IBOutlet var minMaxTemperature : UILabel!
     @IBOutlet var iconImage : UIImageView!
     
+    var viewModel =  WeatherForecastViewModel()
+    var weatherForecastInfo : WeatherForecastResponse? = nil
+    
     var cityNameString : String = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        setTableView()
+        bindWeatherForecastViewModel()
+        viewModel.fetchWeatherForecastInfo()
+    }
+    
+    func setTableView(){
         let nib = UINib(nibName: "WeatherForecastDataTableViewCell", bundle: nil)
         tablewView.register(nib, forCellReuseIdentifier: "cell")
-        
         tablewView.dataSource = self
         tablewView.delegate = self
-        fetchWeatherForecastInfo()
-    
     }
-    
-    func fetchWeatherForecastInfo(){
-        networkManager.fetchWeatherForecastInfo(latitude : ConstantKeys.shared.latitude, longitude : ConstantKeys.shared.longitude){ result in
-            
-            switch result{
-            case .success(let weatherForecastInfo):
-                DispatchQueue.main.async {
-                    self.weatherForecastInfo = weatherForecastInfo
-                    self.tablewView.reloadData()
-                    self.loadData()
-                    self.realmManager.deleteWeatherForecastData()
-                    self.saveWeatherForecastData()
-                }
-            case .failure(let error):
-                 self.getWeatherForecastData()
-                 self.tablewView.reloadData()
-                print("error is : \(error.localizedDescription)")
+
+    func bindWeatherForecastViewModel(){
+        
+        viewModel.tableViewdata.bind { weatherData in
+        guard let weatherData = weatherData else{
+            return
+            }
+            self.weatherForecastInfo = weatherData
+            self.tablewView.reloadData()
+        }
+        
+        viewModel.weatherData.bind { weatherData in
+            guard let waetherData = weatherData else{
+                self.getWeatherForecastData()
+                return
             }
             
+            self.weatherForecastInfo = weatherData
+            self.loadData()
         }
+        
     }
-    
     
     func loadData(){
         cityName.text = self.cityNameString
@@ -107,40 +107,19 @@ class WeatherForecastViewController: UIViewController{
         }.resume()
     }
     
-    
-    //realm
-    func saveWeatherForecastData(){
-        var weatherForecastInfoSize : Int? = weatherForecastInfo?.list.count
-        
-        for i in 0...weatherForecastInfoSize!{
-            
-            let weatherForecastData = WeatherForecastRealm()
-                weatherForecastData.cityName = self.cityNameString
-                weatherForecastData.temperature = "\(weatherForecastInfo?.list[0].main.temp)"
-                weatherForecastData.weatherType = weatherForecastInfo?.list[0].weather[0].main
-                weatherForecastData.icon = weatherForecastInfo?.list[0].weather[0].icon
-                weatherForecastData.currentDate = weatherForecastInfo?.list[0].dt_txt
-                weatherForecastData.minTemperature = "\(weatherForecastInfo?.list[0].main.temp_min)"
-                weatherForecastData.maxTemperature = "\(weatherForecastInfo?.list[0].main.temp_max)"
-                weatherForecastData.time = weatherForecastInfo?.list[0].dt_txt
-                
-              try! realm.write{
-                realm.add(weatherForecastData)
-              }
-        }
-    
-  }
+
+   
     func getWeatherForecastData(){
-        let weatherData = realm.objects(WeatherForecastRealm.self)
+        let data = realm.objects(WeatherForecast.self)
         
-        for i in weatherData {
-            self.cityName.text = i.cityName
-            self.temperature.text = i.temperature
-            self.weatherType.text = i.weatherType
-            self.currentDate.text = i.currentDate
-            self.minMaxTemperature.text = "i.minTemperature" + " i.maxTemperature"
+        for weatherData in data {
+            self.cityName.text = weatherData.cityName
+            self.temperature.text = weatherData.temperature
+            self.weatherType.text = weatherData.weatherType
+            self.currentDate.text = weatherData.currentDate
+            self.minMaxTemperature.text = "weatherData.minTemperature" + " weatherData.maxTemperature"
             
-            let imageUrlString = "https://openweathermap.org/img/w/" + (i.icon ?? "") + ".png"
+            let imageUrlString = "https://openweathermap.org/img/w/" + (weatherData.icon ?? "") + ".png"
             let imageUrl = URL(string:  imageUrlString)
             
             URLSession.shared.dataTask(with: imageUrl!) { data, _, error in

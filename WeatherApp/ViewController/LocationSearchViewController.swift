@@ -4,16 +4,20 @@ import MapboxSearchUI
  
 
 class LocationSearchViewController: UIViewController {
-let searchController = MapboxSearchController()
+ let searchController = MapboxSearchController()
  
-override func viewDidLoad() {
-super.viewDidLoad()
-searchController.delegate = self
-let panelController = MapboxPanelController(rootViewController: searchController)
-addChild(panelController)
+  override func viewDidLoad() {
+   super.viewDidLoad()
+   AddSearchController()
+ }
+    
+    func AddSearchController(){
+        searchController.delegate = self
+        let panelController = MapboxPanelController(rootViewController: searchController)
+        addChild(panelController)
+    }
 }
-}
- 
+
 extension LocationSearchViewController : SearchControllerDelegate {
     
     func searchResultSelected(_ searchResult: MapboxSearch.SearchResult) {
