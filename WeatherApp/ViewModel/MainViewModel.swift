@@ -32,7 +32,6 @@ class MainViewModel {
                 print(error.localizedDescription)
             }
         }
-       
     }
     
     func fetchWeatherForecastInfo(lat : Double, lon : Double){
