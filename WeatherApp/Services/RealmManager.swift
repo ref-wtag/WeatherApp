@@ -8,7 +8,13 @@
 import Foundation
 import RealmSwift
 
-class RealmManager{
+protocol RealmManagerDelegate {
+    func deleteWeatherInfoData()
+    func deleteWeatherForecastData()
+    
+}
+
+class RealmManager : RealmManagerDelegate{
     
     let realm = try! Realm()
     

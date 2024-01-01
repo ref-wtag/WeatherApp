@@ -20,7 +20,7 @@ class WeatherForecastViewController: UIViewController{
     @IBOutlet var minMaxTemperature : UILabel!
     @IBOutlet var iconImage : UIImageView!
     
-    var viewModel =  WeatherForecastViewModel()
+    var viewModel =  WeatherForecastViewModel(netWorkManager: NetworkManager(), realmManager: RealmManager())
     var weatherForecastInfo : WeatherForecastResponse? = nil
     
     var cityNameString : String = ""

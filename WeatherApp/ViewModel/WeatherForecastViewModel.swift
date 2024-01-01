@@ -9,16 +9,20 @@ import Foundation
 import RealmSwift
 
 class WeatherForecastViewModel{
-    var realmManager = RealmManager()
-    let realm = try! Realm()
+    var realmManager : RealmManagerDelegate
+    var netWorkManager : NetworkManagerDelegate
     
     var weatherForecastInfo : WeatherForecastResponse? = nil
     var weatherData : Observable<WeatherForecastResponse> = Observable(nil)
     var tableViewdata : Observable<WeatherForecastResponse> = Observable(nil)
     
+    init(netWorkManager : NetworkManagerDelegate, realmManager : RealmManagerDelegate){
+        self.netWorkManager = netWorkManager
+        self.realmManager = realmManager
+    }
     
     func fetchWeatherForecastInfo(){
-        NetworkManager.shared.fetchWeatherForecastInfo(latitude : ConstantKeys.shared.latitude, longitude : ConstantKeys.shared.longitude){ result in
+        netWorkManager.fetchWeatherForecastInfo(latitude : ConstantKeys.shared.latitude, longitude : ConstantKeys.shared.longitude){ result in
             
             switch result{
             case .success(let weatherForecastInfo):
@@ -45,6 +49,7 @@ class WeatherForecastViewModel{
     }
     
     func saveWeatherForecastData(){
+        let realm = try! Realm()
         var weatherForecastInfoSize : Int? = weatherForecastInfo?.list.count
             let weatherForecastData = WeatherForecast()
                 weatherForecastData.cityName = ConstantKeys.shared.cityName

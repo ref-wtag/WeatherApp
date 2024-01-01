@@ -7,9 +7,13 @@
 
 import Foundation
 
-class NetworkManager{
+protocol NetworkManagerDelegate {
+    func fetchWeatherForecastInfo(latitude : Double,longitude : Double,completion : @escaping (Result<WeatherForecastResponse, Error>) -> ())
+    func fetchCurrentWeatherInfo(latitude : Double,longitude : Double,completion : @escaping (Result<CurrentWeatherInfoResponse,Error>)-> ())
+}
+
+class NetworkManager : NetworkManagerDelegate{
     
-    static let shared = NetworkManager()
     
     public func fetchWeatherForecastInfo(
         latitude : Double,
@@ -18,6 +22,7 @@ class NetworkManager{
     ){
         let urlString = "\(ConstantKeys.BASE_URL)/forecast?lat=\(latitude)&lon=\(longitude)&appid=\(ConstantKeys.APP_ID)"
         let url = URL(string: urlString)
+       
         
         URLSession.shared.dataTask(with: url!) { data, _, error in
             if let data = data {

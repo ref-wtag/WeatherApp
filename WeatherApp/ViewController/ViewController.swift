@@ -15,7 +15,7 @@ class ViewController: UIViewController {
     var long = 0.0
     let locationManager = CLLocationManager()
     var cityNameString : String = ""
-    var viewModel = MainViewModel()
+    var viewModel = MainViewModel(realmManager: RealmManager(), networkManager: NetworkManager())
     var weatherForecastInfo : WeatherForecastResponse? = nil
     var currentWeatherInfo : CurrentWeatherInfoResponse? = nil
     let realm = try! Realm()

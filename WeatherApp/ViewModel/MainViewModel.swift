@@ -9,24 +9,32 @@ import Foundation
 import RealmSwift
 
 class MainViewModel {
-    var realmManager = RealmManager()
-    let realm = try! Realm()
+    
+  
+    var realmManager : RealmManagerDelegate!
+    var networkManager : NetworkManagerDelegate!
+    
     var weatherForecastInfo : WeatherForecastResponse? = nil
     var currentWeatherInfo : CurrentWeatherInfoResponse? = nil
     var collectionViewData : Observable<WeatherForecastResponse> = Observable(nil)
     var currentWeatherData : Observable<CurrentWeatherInfoResponse> = Observable(nil)
     
     
+    init(realmManager : RealmManagerDelegate, networkManager : NetworkManagerDelegate){
+        self.realmManager = realmManager
+        self.networkManager = networkManager
+        
+    }
+    
     func fetchCurrentWeatherInfo(lat : Double, lon : Double) {
-        NetworkManager.shared.fetchCurrentWeatherInfo(latitude : lat, longitude : lon){ result in
+        networkManager.fetchCurrentWeatherInfo(latitude : lat, longitude : lon){ result in
             switch result{
             case .success(let currentWeatherInfo):
+                self.currentWeatherInfo = currentWeatherInfo
                 DispatchQueue.main.async {
-                    self.currentWeatherInfo = currentWeatherInfo
                     self.mapCurrentWeatherData()
                     self.realmManager.deleteWeatherInfoData()
                     self.saveWeatherInfoData()
-
                 }
             case .failure(let error):
                 print(error.localizedDescription)
@@ -35,15 +43,17 @@ class MainViewModel {
     }
     
     func fetchWeatherForecastInfo(lat : Double, lon : Double){
-        NetworkManager.shared.fetchWeatherForecastInfo(latitude: lat, longitude: lon){ result in
+        networkManager.fetchWeatherForecastInfo(latitude: lat, longitude: lon){ result in
             switch result{
             case .success(let hourlyWeatherInfo):
+                self.weatherForecastInfo = hourlyWeatherInfo
                 DispatchQueue.main.async {
-                    self.weatherForecastInfo = hourlyWeatherInfo
                     self.mapCollectionViewData()
                     self.realmManager.deleteWeatherForecastData()
                     self.saveHourlyWeatherForecastData()
                 }
+                
+                
             case .failure(let error):
                 self.mapCollectionViewData()
                 print(error.localizedDescription)
@@ -61,7 +71,7 @@ class MainViewModel {
     
     
     func saveWeatherInfoData(){
-        
+        let realm = try! Realm()
     let weatherInfo = WeatherDataInfo()
         weatherInfo.cityName = ConstantKeys.shared.cityName
         weatherInfo.temperature = "\(currentWeatherInfo?.main.temp)"
@@ -74,6 +84,7 @@ class MainViewModel {
   }
     
     func saveHourlyWeatherForecastData(){
+        let realm = try! Realm()
         let weatherForecastInfoSize : Int? = weatherForecastInfo?.list.count
     
         for weatherData in 0..<(weatherForecastInfoSize ?? 0){
