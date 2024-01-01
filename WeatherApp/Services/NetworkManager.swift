@@ -12,8 +12,23 @@ protocol NetworkManagerDelegate {
     func fetchCurrentWeatherInfo(latitude : Double,longitude : Double,completion : @escaping (Result<CurrentWeatherInfoResponse,Error>)-> ())
 }
 
+protocol URLSessionProtocol {
+    func dataTask(
+        with url: URL,
+        completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void
+    ) -> URLSessionDataTask
+}
+
+extension URLSession : URLSessionProtocol { }
+
+
 class NetworkManager : NetworkManagerDelegate{
     
+    private let urlSession: URLSessionProtocol
+
+    init(urlSession: URLSessionProtocol = URLSession.shared) {
+        self.urlSession = urlSession
+    }
     
     public func fetchWeatherForecastInfo(
         latitude : Double,
@@ -24,7 +39,7 @@ class NetworkManager : NetworkManagerDelegate{
         let url = URL(string: urlString)
        
         
-        URLSession.shared.dataTask(with: url!) { data, _, error in
+        urlSession.dataTask(with: url!) { data, _, error in
             if let data = data {
                 do{
                     let result = try JSONDecoder().decode(WeatherForecastResponse.self, from: data)
@@ -46,14 +61,14 @@ class NetworkManager : NetworkManagerDelegate{
         let urlString = "\(ConstantKeys.BASE_URL)/weather?lat=\(latitude)&lon=\(longitude)&appid=\(ConstantKeys.APP_ID)"
         let url = URL(string: urlString)
         
-        URLSession.shared.dataTask(with: url!) { data, _, error in
+        urlSession.dataTask(with: url!) { data, _, error in
             if let data = data {
                 do{
                     let result = try JSONDecoder().decode(CurrentWeatherInfoResponse.self, from: data)
                     completion(.success(result))
                 }
                 catch{
-                    print("eoor is \(error.localizedDescription)")
+                    print("error is \(error.localizedDescription)")
                     completion(.failure(error))
                 }
             }

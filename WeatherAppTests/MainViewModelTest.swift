@@ -12,13 +12,13 @@ class MainViewModelTest: XCTestCase {
 
     var sut : MainViewModel!
     var realmMock : RealmMock!
-    var netMock : NetworkMock!
+    var networkManagerMock : NetworkManagerMock!
     
     override func setUpWithError() throws {
         try super.setUpWithError()
         realmMock = RealmMock()
-        netMock = NetworkMock()
-        sut = MainViewModel(realmManager : realmMock,  networkManager : netMock)
+        networkManagerMock = NetworkManagerMock()
+        sut = MainViewModel(realmManager : realmMock, networkManager : networkManagerMock)
        
     }
 
@@ -26,7 +26,7 @@ class MainViewModelTest: XCTestCase {
         try super.tearDownWithError()
         sut = nil
         realmMock = nil
-        netMock = nil
+        networkManagerMock = nil
     }
 
     func testfetchCurrentWeatherInfo_Success(){
@@ -77,7 +77,7 @@ class RealmMock : RealmManagerDelegate{
     
 }
 
-class NetworkMock : NetworkManagerDelegate{
+class NetworkManagerMock : NetworkManagerDelegate{
     
     func fetchWeatherForecastInfo(latitude: Double, longitude: Double, completion: @escaping (Result<WeatherForecastResponse, Error>) -> ()) {
         
