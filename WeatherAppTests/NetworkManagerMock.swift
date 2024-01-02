@@ -14,7 +14,7 @@ class NetworkManagerMock : NetworkManagerDelegate{
         
         //success
         var mockWeatherInfoData = CurrentWeatherInfoResponse(weather: [WeatherInfo(main: "clear", icon: "01d")], main: MainWeather(temp: 25.0))
-       // completion(.success(mockWeatherInfoData))
+        completion(.success(mockWeatherInfoData))
         
         //error
         let mockError = NSError(domain: "com.example.error", code: 42, userInfo: [NSLocalizedDescriptionKey: "Simulated error"])
@@ -31,7 +31,7 @@ class NetworkManagerMock : NetworkManagerDelegate{
             dt_txt: "2023-12-31 12:00:00"
         )
         let mockForecastResponse = WeatherForecastResponse(list: [mockWeatherForecastData])
-        //completion(.success(mockForecastResponse))
+        completion(.success(mockForecastResponse))
         
         //error
         let mockError = NSError(domain: "com.example.error", code: 42, userInfo: [NSLocalizedDescriptionKey: "Simulated error"])

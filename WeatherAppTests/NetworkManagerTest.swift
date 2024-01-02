@@ -28,6 +28,7 @@ class NetworkManagerTest: XCTestCase {
     func testFetcCurrenthWeatherInfo_Success() {
         
        let weatherInfoData = CurrentWeatherInfoResponse(weather: [WeatherInfo(main: "clear", icon: "012d")], main: MainWeather(temp: 12.0))
+        
        let mockData = try? JSONEncoder().encode(weatherInfoData)
         
         mockURLSession.mockData = mockData

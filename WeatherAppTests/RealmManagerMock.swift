@@ -11,16 +11,16 @@ import Foundation
 class RealmManagerMock : RealmManagerDelegate{
 
     
-    var mockWeatherInfodata : CurrentWeatherInfoResponse?
-    var mockWeatherForecastdata : WeatherForecastResponse?
+    var isDeleteWeatherInfoDataCalled = false
+    var isDeleteWeatherForecastDataCalled = false
     
     func deleteWeatherInfoData() {
         
-        mockWeatherInfodata = nil
+        isDeleteWeatherInfoDataCalled = true
     }
     
     func deleteWeatherForecastData() {
-        mockWeatherForecastdata = nil
+        isDeleteWeatherForecastDataCalled = true
     }
     
 }

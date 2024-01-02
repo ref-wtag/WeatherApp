@@ -7,31 +7,30 @@
 
 import Foundation
 import RealmSwift
+import Realm
 
 protocol RealmManagerDelegate {
     func deleteWeatherInfoData()
     func deleteWeatherForecastData()
-    
 }
 
 class RealmManager : RealmManagerDelegate{
     
-    let realm = try! Realm()
+    var realm = try! Realm()
     
     func deleteWeatherInfoData(){
-        try! realm.write{
+        try? realm.write{
             realm.delete(realm.objects(WeatherDataInfo.self))
-        }
-        
-        try! realm.write{
             realm.delete(realm.objects(HourlyWeatherForecast.self))
         }
     }
     
     func deleteWeatherForecastData(){
-        try! realm.write{
+        
+        try? realm.write{
             realm.delete(realm.objects(WeatherForecast.self))
         }
     }
+    
     
 }
