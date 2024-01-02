@@ -23,6 +23,13 @@
 		BF49A66F2B39429D009003D8 /* CurrentWeatherInfoResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF49A66E2B39429D009003D8 /* CurrentWeatherInfoResponse.swift */; };
 		BF49A6762B398F77009003D8 /* WeatherForecastViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF49A6752B398F77009003D8 /* WeatherForecastViewModel.swift */; };
 		BF49A67A2B398F91009003D8 /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF49A6792B398F91009003D8 /* MainViewModel.swift */; };
+		BF4FA0E02B43C48700B4E3BE /* WeatherForecastViewModelTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4FA0DF2B43C48700B4E3BE /* WeatherForecastViewModelTest.swift */; };
+		BF4FA0E62B43C85900B4E3BE /* RealmManagerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4FA0E52B43C85900B4E3BE /* RealmManagerMock.swift */; };
+		BF4FA0E82B43C87500B4E3BE /* NetworkManagerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4FA0E72B43C87500B4E3BE /* NetworkManagerMock.swift */; };
+		BF4FA0EA2B43D1B000B4E3BE /* MockURLSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4FA0E92B43D1B000B4E3BE /* MockURLSession.swift */; };
+		BF4FA0EC2B43D1D700B4E3BE /* MockURLSessionDataTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4FA0EB2B43D1D700B4E3BE /* MockURLSessionDataTask.swift */; };
+		BF4FA0EE2B43D2B400B4E3BE /* URLSessionExtention.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4FA0ED2B43D2B400B4E3BE /* URLSessionExtention.swift */; };
+		BF4FA0F02B43D7BF00B4E3BE /* RealmManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4FA0EF2B43D7BF00B4E3BE /* RealmManagerTest.swift */; };
 		BF95F8912B42CF3500AD185C /* NetworkManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF95F8902B42CF3500AD185C /* NetworkManagerTest.swift */; };
 		BF9DDCF22B3A9C2C00EB7934 /* Observable.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9DDCF12B3A9C2C00EB7934 /* Observable.swift */; };
 		BF9DDCF92B3AE03200EB7934 /* CLLocationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9DDCF82B3AE03200EB7934 /* CLLocationExtension.swift */; };
@@ -69,6 +76,13 @@
 		BF49A66E2B39429D009003D8 /* CurrentWeatherInfoResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentWeatherInfoResponse.swift; sourceTree = "<group>"; };
 		BF49A6752B398F77009003D8 /* WeatherForecastViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherForecastViewModel.swift; sourceTree = "<group>"; };
 		BF49A6792B398F91009003D8 /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
+		BF4FA0DF2B43C48700B4E3BE /* WeatherForecastViewModelTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherForecastViewModelTest.swift; sourceTree = "<group>"; };
+		BF4FA0E52B43C85900B4E3BE /* RealmManagerMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmManagerMock.swift; sourceTree = "<group>"; };
+		BF4FA0E72B43C87500B4E3BE /* NetworkManagerMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManagerMock.swift; sourceTree = "<group>"; };
+		BF4FA0E92B43D1B000B4E3BE /* MockURLSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockURLSession.swift; sourceTree = "<group>"; };
+		BF4FA0EB2B43D1D700B4E3BE /* MockURLSessionDataTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockURLSessionDataTask.swift; sourceTree = "<group>"; };
+		BF4FA0ED2B43D2B400B4E3BE /* URLSessionExtention.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessionExtention.swift; sourceTree = "<group>"; };
+		BF4FA0EF2B43D7BF00B4E3BE /* RealmManagerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmManagerTest.swift; sourceTree = "<group>"; };
 		BF95F8902B42CF3500AD185C /* NetworkManagerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManagerTest.swift; sourceTree = "<group>"; };
 		BF9DDCF12B3A9C2C00EB7934 /* Observable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Observable.swift; sourceTree = "<group>"; };
 		BF9DDCF82B3AE03200EB7934 /* CLLocationExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLLocationExtension.swift; sourceTree = "<group>"; };
@@ -275,6 +289,7 @@
 			children = (
 				BF9DDCF82B3AE03200EB7934 /* CLLocationExtension.swift */,
 				BF9DDCFA2B3AE0BE00EB7934 /* CLLocationManagerDelegate.swift */,
+				BF4FA0ED2B43D2B400B4E3BE /* URLSessionExtention.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -284,6 +299,12 @@
 			children = (
 				BF1765772B3D266100003299 /* MainViewModelTest.swift */,
 				BF95F8902B42CF3500AD185C /* NetworkManagerTest.swift */,
+				BF4FA0DF2B43C48700B4E3BE /* WeatherForecastViewModelTest.swift */,
+				BF4FA0E52B43C85900B4E3BE /* RealmManagerMock.swift */,
+				BF4FA0E72B43C87500B4E3BE /* NetworkManagerMock.swift */,
+				BF4FA0E92B43D1B000B4E3BE /* MockURLSession.swift */,
+				BF4FA0EB2B43D1D700B4E3BE /* MockURLSessionDataTask.swift */,
+				BF4FA0EF2B43D7BF00B4E3BE /* RealmManagerTest.swift */,
 			);
 			path = WeatherAppTests;
 			sourceTree = "<group>";
@@ -436,6 +457,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BF9DDCF22B3A9C2C00EB7934 /* Observable.swift in Sources */,
+				BF4FA0EE2B43D2B400B4E3BE /* URLSessionExtention.swift in Sources */,
 				BFFB16032B26CE4A005454D7 /* WeatherForecastDataTableViewCell.swift in Sources */,
 				BF1FD1772B25BEC7002D71A5 /* NetworkManager.swift in Sources */,
 				BFA076A82B32BD1900D2F55E /* ConstantKeys.swift in Sources */,
@@ -463,8 +485,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BF4FA0EA2B43D1B000B4E3BE /* MockURLSession.swift in Sources */,
+				BF4FA0E02B43C48700B4E3BE /* WeatherForecastViewModelTest.swift in Sources */,
+				BF4FA0E62B43C85900B4E3BE /* RealmManagerMock.swift in Sources */,
+				BF4FA0E82B43C87500B4E3BE /* NetworkManagerMock.swift in Sources */,
 				BF95F8912B42CF3500AD185C /* NetworkManagerTest.swift in Sources */,
+				BF4FA0F02B43D7BF00B4E3BE /* RealmManagerTest.swift in Sources */,
 				BF1765782B3D266100003299 /* MainViewModelTest.swift in Sources */,
+				BF4FA0EC2B43D1D700B4E3BE /* MockURLSessionDataTask.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

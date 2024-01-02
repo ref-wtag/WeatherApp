@@ -8,18 +8,18 @@
 import Foundation
 
 protocol NetworkManagerDelegate {
+    
     func fetchWeatherForecastInfo(latitude : Double,longitude : Double,completion : @escaping (Result<WeatherForecastResponse, Error>) -> ())
     func fetchCurrentWeatherInfo(latitude : Double,longitude : Double,completion : @escaping (Result<CurrentWeatherInfoResponse,Error>)-> ())
 }
 
 protocol URLSessionProtocol {
+    
     func dataTask(
         with url: URL,
         completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void
     ) -> URLSessionDataTask
 }
-
-extension URLSession : URLSessionProtocol { }
 
 
 class NetworkManager : NetworkManagerDelegate{

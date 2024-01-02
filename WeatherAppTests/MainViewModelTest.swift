@@ -11,12 +11,12 @@ import XCTest
 class MainViewModelTest: XCTestCase {
 
     var sut : MainViewModel!
-    var realmMock : RealmMock!
+    var realmMock : RealmManagerMock!
     var networkManagerMock : NetworkManagerMock!
     
     override func setUpWithError() throws {
         try super.setUpWithError()
-        realmMock = RealmMock()
+        realmMock = RealmManagerMock()
         networkManagerMock = NetworkManagerMock()
         sut = MainViewModel(realmManager : realmMock, networkManager : networkManagerMock)
        
@@ -65,46 +65,4 @@ class MainViewModelTest: XCTestCase {
 
 }
 
-class RealmMock : RealmManagerDelegate{
-   
-    func deleteWeatherInfoData() {
-        
-    }
-    
-    func deleteWeatherForecastData() {
-        
-    }
-    
-}
 
-class NetworkManagerMock : NetworkManagerDelegate{
-    
-    func fetchWeatherForecastInfo(latitude: Double, longitude: Double, completion: @escaping (Result<WeatherForecastResponse, Error>) -> ()) {
-        
-        //success
-        var mockWeatherForecastData = WeatherInfoList(
-            main: Main(temp: 25.0, temp_max: 28.0, temp_min: 22.0),
-            weather: [Weather(icon: "01d", main: "clear")],
-            wind: Wind(speed: 5.0),
-            dt_txt: "2023-12-31 12:00:00"
-        )
-        let mockForecastResponse = WeatherForecastResponse(list: [mockWeatherForecastData])
-        completion(.success(mockForecastResponse))
-        
-        //error
-        let mockError = NSError(domain: "com.example.error", code: 42, userInfo: [NSLocalizedDescriptionKey: "Simulated error"])
-        //completion(.failure(mockError))
-    }
-    
-    func fetchCurrentWeatherInfo(latitude: Double, longitude: Double, completion: @escaping (Result<WeatherApp.CurrentWeatherInfoResponse, Error>) -> ()) {
-        
-        //success
-        var mockWeatherInfoData = CurrentWeatherInfoResponse(weather: [WeatherInfo(main: "clear", icon: "01d")], main: MainWeather(temp: 25.0))
-       // completion(.success(mockWeatherInfoData))
-        
-        //error
-        let mockError = NSError(domain: "com.example.error", code: 42, userInfo: [NSLocalizedDescriptionKey: "Simulated error"])
-        completion(.failure(mockError))
-    }
-    
-}

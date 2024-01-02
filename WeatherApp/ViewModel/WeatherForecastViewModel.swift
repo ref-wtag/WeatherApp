@@ -26,8 +26,8 @@ class WeatherForecastViewModel{
             
             switch result{
             case .success(let weatherForecastInfo):
+                self.weatherForecastInfo = weatherForecastInfo
                 DispatchQueue.main.async {
-                    self.weatherForecastInfo = weatherForecastInfo
                     self.mapTableViewdata()
                     self.mapWeatherForecastData()
                     self.realmManager.deleteWeatherForecastData()
@@ -36,7 +36,6 @@ class WeatherForecastViewModel{
             case .failure(let error):
                 print("error is : \(error.localizedDescription)")
             }
-            
         }
     }
     
