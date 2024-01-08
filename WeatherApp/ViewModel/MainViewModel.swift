@@ -1,16 +1,7 @@
-//
-//  MainViewModel.swift
-//  WeatherApp
-//
-//  Created by Refat E Ferdous on 12/25/23.
-//
-
 import Foundation
 import RealmSwift
 
 class MainViewModel {
-    
-  
     var realmManager : RealmManagerDelegate!
     var networkManager : NetworkManagerDelegate!
     
@@ -19,11 +10,9 @@ class MainViewModel {
     var collectionViewData : Observable<WeatherForecastResponse> = Observable(nil)
     var currentWeatherData : Observable<CurrentWeatherInfoResponse> = Observable(nil)
     
-    
     init(realmManager : RealmManagerDelegate, networkManager : NetworkManagerDelegate){
         self.realmManager = realmManager
         self.networkManager = networkManager
-        
     }
     
     func fetchCurrentWeatherInfo(lat : Double, lon : Double) {
@@ -52,8 +41,6 @@ class MainViewModel {
                     self.realmManager.deleteWeatherForecastData()
                     self.saveHourlyWeatherForecastData()
                 }
-                
-                
             case .failure(let error):
                 self.mapCollectionViewData()
                 print(error.localizedDescription)
@@ -69,36 +56,27 @@ class MainViewModel {
         self.currentWeatherData.value = self.currentWeatherInfo
     }
     
-    
     func saveWeatherInfoData(){
-        let realm = try! Realm()
-    let weatherInfo = WeatherDataInfo()
+        let weatherInfo = WeatherDataInfo()
         weatherInfo.cityName = ConstantKeys.shared.cityName
         weatherInfo.temperature = "\(currentWeatherInfo?.main.temp)"
         weatherInfo.icon = currentWeatherInfo?.weather[0].icon
         weatherInfo.weatherType = currentWeatherInfo?.weather[0].main
         
-      try! realm.write{
-      realm.add(weatherInfo)
-      }
+        realmManager.saveWeatherInfoData(weatherDataInfo: weatherInfo)
   }
     
     func saveHourlyWeatherForecastData(){
-        let realm = try! Realm()
         let weatherForecastInfoSize : Int? = weatherForecastInfo?.list.count
-    
-        for weatherData in 0..<(weatherForecastInfoSize ?? 0){
+
+        for weatherData in 0..<(weatherForecastInfoSize ?? 1){
                 let weatherForecastData = HourlyWeatherForecast()
                 weatherForecastData.time = weatherForecastInfo?.list[weatherData].dt_txt
                 weatherForecastData.temperature = "\(weatherForecastInfo?.list[weatherData].main.temp)"
                 weatherForecastData.icon = weatherForecastInfo?.list[weatherData].weather[0].icon
                 weatherForecastData.windSpeed = "\(weatherForecastInfo?.list[weatherData].wind.speed)"
                 
-                try! realm.write{
-                    realm.add(weatherForecastData)
-                }
+            self.realmManager.saveHourlyWeatherForecastData(hourlyWeatherForecast: weatherForecastData)
         }
     }
-    
-    
 }

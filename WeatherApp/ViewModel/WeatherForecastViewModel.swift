@@ -48,23 +48,17 @@ class WeatherForecastViewModel{
     }
     
     func saveWeatherForecastData(){
-        let realm = try! Realm()
         var weatherForecastInfoSize : Int? = weatherForecastInfo?.list.count
-            let weatherForecastData = WeatherForecast()
-                weatherForecastData.cityName = ConstantKeys.shared.cityName
-                weatherForecastData.temperature = "\(weatherForecastInfo?.list[0].main.temp)"
-                weatherForecastData.weatherType = weatherForecastInfo?.list[0].weather[0].main
-                weatherForecastData.icon = weatherForecastInfo?.list[0].weather[0].icon
-                weatherForecastData.currentDate = weatherForecastInfo?.list[0].dt_txt
-                weatherForecastData.minTemperature = "\(weatherForecastInfo?.list[0].main.temp_min)"
-                weatherForecastData.maxTemperature = "\(weatherForecastInfo?.list[0].main.temp_max)"
-                weatherForecastData.time = weatherForecastInfo?.list[0].dt_txt
+        let weatherForecastData = WeatherForecast()
+        weatherForecastData.cityName = ConstantKeys.shared.cityName
+        weatherForecastData.temperature = "\(weatherForecastInfo?.list[0].main.temp)"
+        weatherForecastData.weatherType = weatherForecastInfo?.list[0].weather[0].main
+        weatherForecastData.icon = weatherForecastInfo?.list[0].weather[0].icon
+        weatherForecastData.currentDate = weatherForecastInfo?.list[0].dt_txt
+        weatherForecastData.minTemperature = "\(weatherForecastInfo?.list[0].main.temp_min)"
+        weatherForecastData.maxTemperature = "\(weatherForecastInfo?.list[0].main.temp_max)"
+        weatherForecastData.time = weatherForecastInfo?.list[0].dt_txt
                 
-        try! realm.write{
-            realm.add(weatherForecastData)
-        }
+        realmManager.saveWeatherForecastData(weatherForecast : weatherForecastData)
       }
-    
-    
-    
 }

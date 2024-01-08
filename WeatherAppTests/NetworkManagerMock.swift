@@ -1,29 +1,18 @@
-//
-//  NetworkManagerMock.swift
-//  WeatherAppTests
-//
-//  Created by Refat E Ferdous on 1/2/24.
-//
-
 import Foundation
 @testable import WeatherApp
 
 class NetworkManagerMock : NetworkManagerDelegate{
-    
     func fetchCurrentWeatherInfo(latitude: Double, longitude: Double, completion: @escaping (Result<WeatherApp.CurrentWeatherInfoResponse, Error>) -> ()) {
         
-        //success
         var mockWeatherInfoData = CurrentWeatherInfoResponse(weather: [WeatherInfo(main: "clear", icon: "01d")], main: MainWeather(temp: 25.0))
-        completion(.success(mockWeatherInfoData))
+       // completion(.success(mockWeatherInfoData))
         
-        //error
+        
         let mockError = NSError(domain: "com.example.error", code: 42, userInfo: [NSLocalizedDescriptionKey: "Simulated error"])
         completion(.failure(mockError))
     }
     
     func fetchWeatherForecastInfo(latitude: Double, longitude: Double, completion: @escaping (Result<WeatherForecastResponse, Error>) -> ()) {
-        
-        //success
         var mockWeatherForecastData = WeatherInfoList(
             main: Main(temp: 25.0, temp_max: 28.0, temp_min: 22.0),
             weather: [Weather(icon: "01d", main: "clear")],
@@ -37,5 +26,4 @@ class NetworkManagerMock : NetworkManagerDelegate{
         let mockError = NSError(domain: "com.example.error", code: 42, userInfo: [NSLocalizedDescriptionKey: "Simulated error"])
         completion(.failure(mockError))
     }
-    
 }

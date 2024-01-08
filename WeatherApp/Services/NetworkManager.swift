@@ -1,29 +1,18 @@
-//
-//  NetworkManager.swift
-//  WeatherApp
-//
-//  Created by Refat E Ferdous on 12/10/23.
-//
-
 import Foundation
 
 protocol NetworkManagerDelegate {
-    
     func fetchWeatherForecastInfo(latitude : Double,longitude : Double,completion : @escaping (Result<WeatherForecastResponse, Error>) -> ())
     func fetchCurrentWeatherInfo(latitude : Double,longitude : Double,completion : @escaping (Result<CurrentWeatherInfoResponse,Error>)-> ())
 }
 
 protocol URLSessionProtocol {
-    
     func dataTask(
         with url: URL,
         completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void
     ) -> URLSessionDataTask
 }
 
-
 class NetworkManager : NetworkManagerDelegate{
-    
     private let urlSession: URLSessionProtocol
 
     init(urlSession: URLSessionProtocol = URLSession.shared) {
@@ -46,7 +35,7 @@ class NetworkManager : NetworkManagerDelegate{
                     completion(.success(result))
                 }
                 catch{
-                    print("eoor is \(error.localizedDescription)")
+                    print("error is \(error.localizedDescription)")
                     completion(.failure(error))
                 }
             }
@@ -74,5 +63,4 @@ class NetworkManager : NetworkManagerDelegate{
             }
         }.resume()
     }
-    
 }
