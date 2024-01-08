@@ -26,6 +26,7 @@ class MainViewModelTest: XCTestCase {
     func testfetchCurrentWeatherInfo_Success(){
         let mockLat = 0.0
         let mockLong = 0.0
+        networkManagerMock.shouldExecuteSuccess = true
         sut.fetchCurrentWeatherInfo(lat: mockLat, lon: mockLong)
         XCTAssertNotNil(sut.currentWeatherInfo)
         XCTAssertEqual(sut.currentWeatherInfo?.weather[0].main, "clear")
@@ -34,6 +35,7 @@ class MainViewModelTest: XCTestCase {
     func testfetchCurrentWeatherInfo_Error(){
         let mockLat = 0.0
         let mockLong = 0.0
+        networkManagerMock.shouldExecuteSuccess = false
         sut.fetchCurrentWeatherInfo(lat: mockLat, lon: mockLong)
         XCTAssertNil(sut.currentWeatherInfo)
     }
@@ -41,6 +43,7 @@ class MainViewModelTest: XCTestCase {
     func testfetchWeatherForecastInfo_Success(){
         let mockLat = 0.0
         let mockLong = 0.0
+        networkManagerMock.shouldExecuteSuccess = true
         sut.fetchWeatherForecastInfo(lat: mockLat, lon: mockLong)
         XCTAssertNotNil(sut.weatherForecastInfo)
         XCTAssertEqual(sut.weatherForecastInfo?.list[0].main.temp, 25.0)
@@ -49,9 +52,10 @@ class MainViewModelTest: XCTestCase {
     func testfetchWeatherForecastInfo_Error(){
         let mockLat = 0.0
         let mockLong = 0.0
+        networkManagerMock.shouldExecuteSuccess = false
         sut.fetchCurrentWeatherInfo(lat: mockLat, lon: mockLong)
         XCTAssertNil(sut.weatherForecastInfo)
-        XCTAssertEqual(sut.weatherForecastInfo?.list[0].main.temp, 25.0)
+        XCTAssertNotEqual(sut.weatherForecastInfo?.list[0].main.temp, 25.0)
     }
     
     func testSaveWeatherInfoData_Success(){
